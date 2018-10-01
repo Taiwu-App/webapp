@@ -13,18 +13,22 @@ interface IProp {
 export default class BoardComponent extends React.Component<IProp> {
   public render() {
     return (
-      <table className="build-plan__board">
+      <div className="build-plan__board">
         { this.props.board.grids.vals.map(this.renderRow) }
-      </table>
+      </div>
     );
   }
 
   @bindthis
   private renderRow(row: IGridInfo[], idx: number): React.ReactNode {
     return (
-      <tr key={idx} className="build-plan__board-row">
+      <ul
+        key={idx}
+        className="build-plan__board-row"
+        style={{ height: this.props.cellSize }}
+      >
         { row.map(this.renderCell) }
-      </tr>
+      </ul>
     );
   }
 
@@ -38,13 +42,13 @@ export default class BoardComponent extends React.Component<IProp> {
       className += ` ${grid.isAllow ? 'allow' : 'forbidden'}`;
     }
     return (
-      <td
+      <li
         key={idx}
         className={className}
         style={{ height: this.props.cellSize, width: this.props.cellSize}}
       >
         {text}
-      </td>
+      </li>
     );
   }
 }

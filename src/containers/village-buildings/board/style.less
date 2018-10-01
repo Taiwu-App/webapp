@@ -1,7 +1,17 @@
 .build-plan__board {
-  border-collapse: collapse;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.build-plan__board-row:not(:first-child) > .build-plan__board-cell {
+  border-top: none;
 }
 
 .build-plan__board-cell {
+  display: inline-block;
+  box-sizing: border-box;
   border: 1px solid black;
+  &:not(:first-child) {
+    border-left: none;
+  }
 }
