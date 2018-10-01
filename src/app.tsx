@@ -14,9 +14,7 @@ export default class App extends React.Component {
         {/* begin of main */}
         <div className="layout__body">
           <SideMenu />
-          <main className="main-content">
-            <RouterView />
-          </main>
+          <RouterView />
         </div>
         {/* end of main */}
       </div>

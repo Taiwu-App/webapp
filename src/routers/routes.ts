@@ -10,16 +10,16 @@ export interface IRouteProps extends RouteProps {
 
 export const routes: IRouteProps[] = [
   {
-    component: About,
-    exact: true,
-    path: '/about',
-    text: '关于'
-  },
-  {
     component: VillageBuildings,
     exact: true,
     path: '/buildings',
     text: '建筑布局'
+  },
+  {
+    component: About,
+    exact: true,
+    path: '/about',
+    text: '关于'
   }
 ];
 

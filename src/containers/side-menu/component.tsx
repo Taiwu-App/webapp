@@ -16,12 +16,6 @@ export default class SideMenuComponent extends React.Component {
       <nav className="side-menu">
         <Menu className="side-menu__list">
           { routes.map(this.renderMenuItem) }
-          {/* <MenuItem className="side-menu__item clickable">
-            关于
-          </MenuItem>
-          <MenuItem className="side-menu__item clickable">
-            建筑布局
-          </MenuItem> */}
         </Menu>
       </nav>
     );

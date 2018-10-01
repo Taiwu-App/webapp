@@ -8,11 +8,13 @@
   },
   "rules":{
     "indent": [true, "spaces", 2],
+    "max-classes-per-file": false,
     "no-console": false,
     "no-require-imports": false,
     "no-unused-variable": false,
     "no-unused-expression": false,
     "semicolon": [true, "always"],
-    "quotemark": [true, "single", "jsx-double"]
+    "quotemark": [true, "single", "jsx-double"],
+    "variable-name": [true, "ban-keywords", "check-format", "allow-leading-underscore"]
   }
 }
