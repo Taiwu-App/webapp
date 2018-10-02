@@ -40,7 +40,6 @@ class VillageBuildings extends React.Component<{}, IVillageBuildingsState> {
         </div>
         <SideBar
           ref={this.sideBarRef}
-          channel={this.channel}
         />
       </main>
     );

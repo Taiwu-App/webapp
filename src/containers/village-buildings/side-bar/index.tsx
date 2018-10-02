@@ -1,49 +1,65 @@
 import { StandardLonghandProperties } from 'csstype';
+import { observer } from 'mobx-react';
 import * as React from 'react';
 
-import bindthis from '@/decorators/bindthis';
-import MessageChannel from '@/utils/message-channel';
-import MessageEvents from '../message-events';
-import SideBarComponent from './component';
+import Slider from '@/components/slider';
+import moduleStore from '../module-store';
+import './style.less';
 
-export interface ISideBarProps {
-  channel: MessageChannel;
-}
-
-export interface ISideBarState {
-  zoomRatio: number;
-}
-
-export default class SideBar extends React.Component<ISideBarProps, ISideBarState> {
+@observer
+export default class SideBar extends React.Component {
   public containerStyle: StandardLonghandProperties = {
     marginLeft: '12px',
     width: '160px'
   };
   
-  constructor(props: ISideBarProps) {
-    super(props);
-    this.state = {
-      zoomRatio: 30
-    };
+  private iconClassName: string = 'build-plan-aside__icon';
+  private get zoomRatio() { return moduleStore.cellSizeZoomRatio; }
+  // generate some class names dynamically
+  private get zoomInIconClasses() {
+    const classes = [this.iconClassName, `${this.iconClassName}--zoom-in`];
+    if (this.zoomRatio === 100) { classes.push(`${this.iconClassName}--disabled`); }
+    else { classes.push('clickable'); }
+    return classes;
   }
-
-  public componentDidMount() {
-    // initialize the cell size of the board
-    this.handleZoom(this.state.zoomRatio);
+  private get zoomOutIconClasses() {
+    const classes = [this.iconClassName, `${this.iconClassName}--zoom-out`];
+    if (this.zoomRatio === 0) { classes.push(`${this.iconClassName}--disabled`); }
+    else { classes.push('clickable'); }
+    return classes;
+  }
+  private get moveIconClasses() {
+    return [this.iconClassName, `${this.iconClassName}--pan`, 'clickable'];
   }
 
   public render() {
+    const { cellSizeZoomRatio, handleZoomInClicked, HandleZoomOutClicked, setRatio } = moduleStore;
     return (
-      <SideBarComponent
-        handleZoom={this.handleZoom}
-        containerStyle={this.containerStyle}
-        zoomRatio={this.state.zoomRatio}
-      />
+      <aside
+        className="build-plan-aside__container"
+        style={this.containerStyle}
+      >
+        {/* tool bar begin */}
+        <section className="build-plan-aside__tool-bar">
+          <div className="build-plan-aside__zoom-container">
+            <i
+              className={this.zoomOutIconClasses.join(' ')}
+              onClick={HandleZoomOutClicked}
+            />
+            <Slider
+              className="build-plan-aside__zoom-slider"
+              onChange={setRatio}
+              value={cellSizeZoomRatio}
+            />
+            <i
+              className={this.zoomInIconClasses.join(' ')}
+              onClick={handleZoomInClicked}
+            />
+          </div>
+          <i className={this.moveIconClasses.join(' ')} />
+        </section>
+        {/* tool bar end */}
+      </aside>
     );
-  }
-
-  @bindthis private handleZoom(ratio: number) {
-    this.setState({ ...this.state, zoomRatio: ratio });
-    this.props.channel.publish(MessageEvents.gridSizeChange.toString(), { ratio });
   }
 }
