@@ -1,7 +1,5 @@
 import * as React from 'react';
 
-import './menu-style.less';
-
 export interface IMenuProps {
   className?: string;
 }

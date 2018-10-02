@@ -10,6 +10,7 @@ export default class SideMenu extends React.Component<ISideMenuProp> {
   public static defaultProps: ISideMenuProp = {
     className: ''
   };
+  
   constructor(props: any) {
     super(props);
   }

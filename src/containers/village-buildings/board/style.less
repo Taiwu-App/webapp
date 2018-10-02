@@ -1,15 +1,14 @@
-.build-plan__board {
-  white-space: nowrap;
-  overflow: hidden;
-}
-
-.build-plan__board-row:not(:first-child) > .build-plan__board-cell {
-  border-top: none;
+.build-plan__board-row {
+  display: block;
+  &:not(:first-child) > .build-plan__board-cell {
+    border-top: none;
+  }
 }
 
 .build-plan__board-cell {
   display: inline-block;
-  box-sizing: border-box;
+  height: 100%;
+  padding: 0;
   border: 1px solid black;
   &:not(:first-child) {
     border-left: none;

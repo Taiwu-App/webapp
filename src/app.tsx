@@ -1,10 +1,10 @@
 import 'normalize.css';
 import * as React from 'react';
 
+import './assets/css/global.less';
 import SideMenu from './containers/side-menu';
 import TopHeader from './containers/top-header';
 import RouterView from './routers';
-import './styles/global.less';
 
 export default class App extends React.Component {
   public render() {

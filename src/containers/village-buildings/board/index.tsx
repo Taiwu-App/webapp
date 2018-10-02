@@ -19,6 +19,10 @@ export interface IBoardState {
 const size: number[] = [13, 13];
 
 export default class Board extends React.Component<IBoardProp,IBoardState> {
+  // cell size limits for zooming
+  private minCellSize: number = 16;
+  private maxCellSize: number = 128;
+
   constructor(props: any) {
     super(props);
     this.state = {
@@ -41,11 +45,10 @@ export default class Board extends React.Component<IBoardProp,IBoardState> {
 
   @bindthis
   private gridSizeChange(payloads: IGridSizeChangePayload) {
-    const { mode } = payloads;
-    const offset = mode === 'in' ? 4 : -4;
-    let cellSize = this.state.cellSize + offset;
-    if (cellSize < 16) { cellSize = 16; }
-    else if (cellSize > 96) { cellSize = 96; }
+    const { ratio } = payloads;
+    const cellSize = (this.maxCellSize - this.minCellSize) * ratio / 100 + this.minCellSize;
+    // difference is too small to update the rendering
+    if (Math.abs(cellSize - this.state.cellSize) < 1 ) { return; }
     this.setState({
       ...this.state,
       cellSize

@@ -5,7 +5,8 @@ enum MessageEvents {
 }
 
 export interface IGridSizeChangePayload {
-  mode: 'in' | 'out';
+  // ratio \in [0, 100]
+  ratio: number;
 }
 
 export default MessageEvents;

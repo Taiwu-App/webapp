@@ -12,9 +12,9 @@ export default class TopHeader extends React.Component<ITopHead> {
   };
   public render() {
     return (
-      <div className={`top-header ${this.props.className}`}>
+      <header className={`top-header ${this.props.className}`}>
         <h1 className="top-header__heading">太吾绘卷微应用</h1>
-      </div>
+      </header>
     );
   }
 }

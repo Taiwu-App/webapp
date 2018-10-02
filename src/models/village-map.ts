@@ -13,6 +13,11 @@ export enum EGridStatus {
   occupied = 'occupied'
 }
 
+/**
+ * @class
+ * @member rows number of rows
+ * @member columns number of columns
+ */
 export class VillageMap {
   // rows, columns
   public readonly grids: Matrix<IGridInfo>;
