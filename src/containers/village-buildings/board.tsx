@@ -72,7 +72,7 @@ export default class Board extends React.Component<IBoardProps> {
   @bindthis
   private handleWheelZoom(ev: React.WheelEvent<HTMLTableElement>) {
     // console.log(ev.deltaY);
-    const offset = ev.deltaY > 0 ? 10 : -10;
+    const offset = ev.deltaY > 0 ? -10 : 10;
     this.props.store.offsetRatio(offset);
   }
 }
