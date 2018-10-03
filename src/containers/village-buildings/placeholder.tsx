@@ -52,7 +52,7 @@ export default class Placeholder extends React.Component<IProps> {
   }
 
   @bindthis private handleMousedown(ev: React.MouseEvent<HTMLElement>) {
-    if (this.props.handleMousedown === undefined) { return; }
+    if (this.props.handleMousedown === undefined || ev.button !== 0) { return; }
     const props = { ...this.props };
     delete props.handleMousedown;
     delete props.className;

@@ -55,6 +55,7 @@ export default class SliderStore implements ISliderStore {
   }
 
   @action.bound public onDragStart(ev: React.MouseEvent<HTMLDivElement>) {
+    if (ev.button !== 0) { return; }
     ev.preventDefault();
     // zero width
     if (this.boundingBox.filter(v => v > 0).length === 0) { return; }

@@ -33,6 +33,7 @@ export class DraggableStore implements IDraggable {
   }
 
   @action.bound public onDragStart(ev: React.MouseEvent<HTMLElement>) {
+    if (ev.button !== 0) { return; }
     ev.preventDefault();
     const { pageX, pageY } = ev;
     this.clickedPos = new Point2D(pageX, pageY);
