@@ -31,29 +31,29 @@ export interface ILimitation {
 // accepted constructor input
 export interface IPlaceholder {
   description: string;
-  icon?: string;
+  icon: string;
   name: string;
+  textColor: string;
+  backgroundColor: string;
 }
+
 export abstract class Placeholder implements IPlaceholder {
   public readonly description: string;
   public readonly icon: string;
   public readonly name: string;
+  public readonly textColor: string;
+  public readonly backgroundColor: string;
 
   constructor(params: IPlaceholder) {
-    const { description = '', icon = '', name = '' } = params;
+    const { description = '', icon = '', name = '', textColor = '', backgroundColor = '' } = params;
     this.description = description;
     this.icon = icon;
     this.name = name;
+
+    this.textColor = textColor;
+    this.backgroundColor = backgroundColor;
   }
 }
-
-// export interface ILandScape extends IPlaceholder {
-//   rarity: 'n' | 'r' | 'sr';
-// }
-
-// export class LandScape extends Placeholder implements ILandScape {
-//   public readonly rarity: 'n' | 'r' | 'sr';
-// }
 
 export interface IBuilding extends IPlaceholder {
   bookInfo?: IBookInfo;

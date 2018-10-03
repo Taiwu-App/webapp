@@ -9,7 +9,7 @@ export interface IDraggable {
 
   onDragEnd: (ev: MouseEvent) => void;
   onDragMoving: (ev: MouseEvent) => void;
-  onDragStart: (ev: React.MouseEvent<HTMLDivElement>) => any;
+  onDragStart: (ev: React.MouseEvent<HTMLElement>) => any;
 }
 
 /**
@@ -32,7 +32,7 @@ export class DraggableStore implements IDraggable {
     return this._isDragging;
   }
 
-  @action.bound public onDragStart(ev: React.MouseEvent<HTMLDivElement>) {
+  @action.bound public onDragStart(ev: React.MouseEvent<HTMLElement>) {
     ev.preventDefault();
     const { pageX, pageY } = ev;
     this.clickedPos = new Point2D(pageX, pageY);
@@ -40,6 +40,7 @@ export class DraggableStore implements IDraggable {
     this._isDragging = true;
     window.addEventListener('mousemove', this.onDragMoving, true);
     window.addEventListener('mouseup', this.onDragEnd, true);
+    window.addEventListener('wheel', this.onWheel, true);
   }
 
   @action.bound public onDragEnd(ev: MouseEvent) {
@@ -48,9 +49,15 @@ export class DraggableStore implements IDraggable {
     this._isDragging = false;
     window.removeEventListener('mousemove', this.onDragMoving, true);
     window.removeEventListener('mouseup', this.onDragEnd, true);
+    window.removeEventListener('wheel', this.onWheel, true);
   }
 
   @action.bound public onDragMoving(ev: MouseEvent) {
     this.mousePos = new Point2D(ev.pageX, ev.pageY);
+  }
+
+  @action.bound public onWheel(ev: WheelEvent) {
+    ev.stopPropagation();
+    ev.preventDefault();
   }
 }

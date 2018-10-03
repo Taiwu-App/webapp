@@ -6,7 +6,7 @@ import './style.less';
 
 export default function draggable<T extends {new(...args:any[]): React.Component}> (constructor: T) {
   @observer
-  class DecoratedClass extends constructor {
+  class DraggableClass extends constructor {
     private store: IDraggable = new DraggableStore();
     public render() {
       const className = `lt-draggable__container${this.store.isDragging ? ' dragging' : ''}`;
@@ -21,5 +21,5 @@ export default function draggable<T extends {new(...args:any[]): React.Component
       );
     }
   }
-  return DecoratedClass;
+  return DraggableClass;
 }

@@ -1,15 +1,23 @@
 import { observer } from 'mobx-react';
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 
 import Slider from '@/components/slider';
 import { ISliderStore } from '@/components/slider/store';
+import bindthis from '@/decorators/bindthis';
+import { IPlaceholder } from '@/models/buildings';
+import Placeholder, { DraggablePlaceholder } from './placeholder';
 import './style.less';
 
 export interface ISideBarStore {
+  cellSize: number;
+  filteredPlaceholders: IPlaceholder[];
   isZoomBarDragging: boolean;
-  offsetRatio: (offset: number) => any;
   sliderStore: ISliderStore;
   zoomRatio: number;
+
+  offsetRatio: (offset: number) => any;
+  placeholderDraggingBegin: (ev: React.MouseEvent<HTMLElement>, ref: React.RefObject<DraggablePlaceholder>) => any;
 }
 
 interface IProps {
@@ -76,7 +84,50 @@ export default class SideBar extends React.Component<IProps> {
           <i className={this.moveIconClasses.join(' ')} />
         </section>
         {/* tool bar end */}
+
+        {/* filter too bar */}
+
+        {/* placeholders begin */}
+        <div className="build-plan-aside__placeholder-scroll">
+          <ul className="build-plan-aside__placeholder-list">
+            {this.props.store.filteredPlaceholders.map(
+              p => (
+                <Placeholder
+                  {...p}
+                  key={p.name}
+                  size={containerStyle.width / 2 - 1} 
+                  className="build-plan-aside__placeholder"
+                  handleMousedown={this.createDraggablePlaceholder}
+                />
+              )
+            )}
+          </ul>
+        </div>
+        {/* placeholders end */}
       </aside>
     );
+  } // render
+
+  // create a draggable element, then pass it to the store
+  @bindthis private createDraggablePlaceholder(ev: React.MouseEvent<HTMLElement>, props: IPlaceholder) {
+    const container = document.createElement('div');
+    const { pageX, pageY } = ev;
+    const { cellSize } = this.props.store;
+    container.style.left = `${pageX - cellSize / 2}px`;
+    container.style.position = 'absolute';
+    container.style.top = `${pageY - cellSize / 2}px`;
+    // container.id='123123';
+    const ref: React.RefObject<DraggablePlaceholder> = React.createRef();
+
+    document.getElementsByTagName('body')[0].appendChild(container);
+    ReactDOM.render(
+      <DraggablePlaceholder
+        ref={ref}
+        {...props}
+        size={cellSize}
+      />,
+      container
+    );
+    this.props.store.placeholderDraggingBegin(ev, ref);
   }
 }
