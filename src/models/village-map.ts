@@ -13,12 +13,17 @@ export enum EGridStatus {
   occupied = 'occupied'
 }
 
+export interface IVillageMap {
+  grids: Matrix<IGridInfo>;
+  addPlaceholder: (position: Point2D, placeholder: IPlaceholder) => void;
+}
+
 /**
  * @class
  * @member rows number of rows
  * @member columns number of columns
  */
-export class VillageMap {
+export class VillageMap implements IVillageMap {
   // rows, columns
   public readonly grids: Matrix<IGridInfo>;
   /**

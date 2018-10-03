@@ -3,18 +3,22 @@ import { observer } from 'mobx-react';
 import * as React from 'react';
 
 import Slider from '@/components/slider';
-import LocalStore from './store';
+import { ISliderStore } from '@/components/slider/store';
 import './style.less';
 
+export interface ISideBarStore {
+  isZoomBarDragging: boolean;
+  offsetRatio: (offset: number) => any;
+  sliderStore: ISliderStore;
+  zoomRatio: number;
+}
+
 interface IProps {
-  store?: LocalStore;
+  store: ISideBarStore;
 }
 
 @observer
 export default class SideBar extends React.Component<IProps> {
-  public static defaultProps: IProps = {
-    store: new LocalStore()
-  };
   public containerStyle: StandardLonghandProperties = {
     marginLeft: '12px',
     width: '160px'

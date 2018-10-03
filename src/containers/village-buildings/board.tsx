@@ -1,24 +1,29 @@
+import {observer} from 'mobx-react';
 import * as React from 'react';
 
 import bindthis from '@/decorators/bindthis';
-import { IGridInfo, VillageMap } from '@/models/village-map';
-import './style.less';
+import { IGridInfo } from '@/models/village-map';
 
-interface IProp {
-  board: VillageMap;
-  // length and width of a cell
-  cellSize: number;
-  isDragging: boolean;
+export interface IBoardStore {
+  boardHeight: number;
+  boardWidth: number;
+  grids: IGridInfo[][];
+  numberRows: number;
+  numberColumns: number;
 }
 
-export default class BoardComponent extends React.Component<IProp> {
+export interface IBoardProps {
+  store: IBoardStore;
+}
+
+@observer
+export default class Board extends React.Component<IBoardProps> {
   public render() {
-    const width = this.props.cellSize * this.props.board.columns;
-    const height = this.props.cellSize * this.props.board.rows;
+    const { boardWidth: width, boardHeight: height, grids } = this.props.store;
     return (
       <table className="build-plan__board">
         <tbody style={{ height, width, display: 'block'}}>
-          { this.props.board.grids.vals.map(this.renderRow) }
+          { grids.map(this.renderRow) }
         </tbody>
       </table>
     );
@@ -26,7 +31,7 @@ export default class BoardComponent extends React.Component<IProp> {
 
   @bindthis
   private renderRow(row: IGridInfo[], idx: number): React.ReactNode {
-    const heightRatio = `${100 / this.props.board.rows}%`;
+    const heightRatio = `${100 / this.props.store.numberRows}%`;
     return (
       <tr
         key={idx}
@@ -42,12 +47,12 @@ export default class BoardComponent extends React.Component<IProp> {
   private renderCell(grid: IGridInfo, idx: number): React.ReactNode {
     const placeholder = grid.placeholder;
     const text = placeholder === null ? '' : placeholder.name;
-    let className = `build-plan__board-cell`;
-    if (this.props.isDragging) {
-      className += ` ${grid.status}`;
-      className += ` ${grid.isAllow ? 'allow' : 'forbidden'}`;
-    }
-    const widthRatio = `${100 / this.props.board.columns}%`;
+    const className = `build-plan__board-cell`;
+    // if (this.props.isDragging) {
+    //   className += ` ${grid.status}`;
+    //   className += ` ${grid.isAllow ? 'allow' : 'forbidden'}`;
+    // }
+    const widthRatio = `${100 / this.props.store.numberColumns}%`;
     return (
       <td
         key={idx}

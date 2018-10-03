@@ -1,12 +1,12 @@
 import { observer } from 'mobx-react';
 import * as React from 'react';
 
-import SliderStore from './store';
+import SliderStore, { ISliderStore } from './store';
 import './style.less';
 
 interface IProps {
   className?: string;
-  store?: SliderStore;
+  store?: ISliderStore;
 }
 
 @observer

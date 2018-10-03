@@ -1,6 +1,20 @@
 import { action, computed, observable } from 'mobx';
 
-export default class SliderStore {
+export interface ISliderStore {
+  containerRef: React.RefObject<HTMLDivElement>;
+  isDragging: boolean;
+  ratio: number;
+  ratioLeft: number;
+  ratioRight: number;
+
+  onDragEnd: (ev: MouseEvent) => void;
+  onDragMove: (ev: MouseEvent) => void;
+  onDragStart: (ev: React.MouseEvent<HTMLDivElement>) => any;
+  onContainerClicked: (ev: React.MouseEvent<HTMLDivElement>) => any;
+  setRatio: (val: number) => any;
+}
+
+export default class SliderStore implements ISliderStore {
   @observable private _isDragging = false;
   @computed public get isDragging() {
     return this._isDragging;

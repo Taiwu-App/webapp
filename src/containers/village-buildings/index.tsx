@@ -3,10 +3,9 @@ import * as React from 'react';
 
 import bindthis from '@/decorators/bindthis';
 import { attachResizeListener, IDynamicSize } from '@/decorators/window-events-listener';
-import MessageChannel from '@/utils/message-channel';
 import Board from './board';
-import moduleStore from './module-store';
 import SideBar from './side-bar';
+import store from './store';
 import './style.less';
 
 export interface IVillageBuildingsState extends IDynamicSize {
@@ -15,7 +14,6 @@ export interface IVillageBuildingsState extends IDynamicSize {
 
 @observer
 class VillageBuildings extends React.Component<{}, IVillageBuildingsState> {
-  private channel: MessageChannel;
   private containerRef: React.RefObject<HTMLMainElement> = React.createRef();
   private sideBarRef: React.RefObject<SideBar> = React.createRef();
   constructor(props: any) {
@@ -24,7 +22,6 @@ class VillageBuildings extends React.Component<{}, IVillageBuildingsState> {
       boardWidth: 0,
       handleResize: this.handleResize
     };
-    this.channel = new MessageChannel();
   }
 
   public render(){
@@ -38,12 +35,12 @@ class VillageBuildings extends React.Component<{}, IVillageBuildingsState> {
           style={{maxWidth: this.state.boardWidth}}
         >
           <Board
-            channel={this.channel}
+            store={store}
           />
         </div>
         <SideBar
           ref={this.sideBarRef}
-          store={moduleStore.sideBarStore}
+          store={store}
         />
       </main>
     );
