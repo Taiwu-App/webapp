@@ -23,7 +23,7 @@
 }
 
 .lt-slider__circle {
-  cursor: pointer;
+  cursor: grab;
   position: absolute;
   top: 50%;
   transform: translate(-50%, -50%) scale(1);
@@ -35,5 +35,8 @@
   &:hover,
   &.dragging {
     transform: translate(-50%, -50%) scale(1.5);
+  }
+  &.dragging {
+    cursor: grabbing;
   }
 }

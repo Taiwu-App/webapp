@@ -6,34 +6,34 @@
 .build-plan__middle-container {
   flex: 1 1 auto;
   margin-top: 24px;
-  background: white;
   display: flex;
   justify-content: center;
   align-items: center;
   overflow: hidden;
-  padding: 0 36px;
+  border: 48px solid white;
 }
 
 // side bar
 .build-plan-aside__container {
   flex: 0 0 auto;
   background: white;
-  border-left: 1px solid #333333;
+  border-left: 1px solid rgb(214, 214, 214);
 }
 
 .build-plan-aside__tool-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid black;
+  border-bottom: 1px solid rgb(214, 214, 214);
 }
+
 // slider
 .build-plan-aside__zoom-container {
   display: flex;
   flex: 7 7 auto;
   justify-content: space-around;
   align-items: center;
-  border-right: 1px solid black;
+  border-right: 1px solid rgb(214, 214, 214);
   padding: 12px 0;
 }
 .build-plan-aside__icon {
@@ -66,6 +66,10 @@
 }
 
 // board
+.build-plan__board {
+  background: white;
+}
+
 .build-plan__board-row {
   display: block;
   &:not(:first-child) > .build-plan__board-cell {

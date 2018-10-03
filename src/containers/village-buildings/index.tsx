@@ -4,7 +4,7 @@ import * as React from 'react';
 import bindthis from '@/decorators/bindthis';
 import { attachResizeListener, IDynamicSize } from '@/decorators/window-events-listener';
 import Board from './board';
-import SideBar from './side-bar';
+import SideBar, { containerStyle as sideBarContainerStyle } from './side-bar';
 import store from './store';
 import './style.less';
 
@@ -15,7 +15,6 @@ export interface IVillageBuildingsState extends IDynamicSize {
 @observer
 class VillageBuildings extends React.Component<{}, IVillageBuildingsState> {
   private containerRef: React.RefObject<HTMLMainElement> = React.createRef();
-  private sideBarRef: React.RefObject<SideBar> = React.createRef();
   constructor(props: any) {
     super(props);
     this.state = {
@@ -34,27 +33,19 @@ class VillageBuildings extends React.Component<{}, IVillageBuildingsState> {
           className="build-plan__middle-container"
           style={{maxWidth: this.state.boardWidth}}
         >
-          <Board
-            store={store}
-          />
+          <Board store={store}/>
         </div>
-        <SideBar
-          ref={this.sideBarRef}
-          store={store}
-        />
+        <SideBar store={store}/>
       </main>
     );
   }
 
   @bindthis
   private handleResize() {
-    if (this.containerRef.current === null || this.sideBarRef.current === null) { return; }
-    const containerStyle = this.sideBarRef.current.containerStyle;
-    const width = parseInt((containerStyle.width as string).split('px')[0], 10);
-    const marginLeft = parseInt((containerStyle.marginLeft as string).split('px')[0], 10);
+    if (this.containerRef.current === null) { return; }
     this.setState({
       ...this.state,
-      boardWidth: this.containerRef.current.clientWidth - width - marginLeft
+      boardWidth: this.containerRef.current.clientWidth - sideBarContainerStyle.width - sideBarContainerStyle.marginLeft
     });
   }
 }

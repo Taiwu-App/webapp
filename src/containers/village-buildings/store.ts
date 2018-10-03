@@ -15,7 +15,7 @@ class BuildPlanning implements ISideBarStore, IBoardStore {
 
   // square grid size, width/height
   private readonly minCellSize = 16;
-  private readonly maxCellSize = 128;
+  private readonly maxCellSize = 256;
 
   constructor() {
     this.sliderStore = new SliderStore();

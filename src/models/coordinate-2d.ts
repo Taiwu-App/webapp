@@ -7,4 +7,17 @@ export default class Coordinate2D {
     const squaredDistance = (pt.x - this.x) ** 2 + (pt.y - this.y) ** 2;
     return Math.sqrt(squaredDistance);
   }
+
+  public minus(pt: Coordinate2D): Coordinate2D {
+    return new Coordinate2D(this.x - pt.x, this.y - pt.y);
+  }
+
+  public plus(pt: Coordinate2D): Coordinate2D {
+    return new Coordinate2D(this.x + pt.x, this.y + pt.y);
+  }
+
+  public offset(dx: number, dy: number): void {
+    this._x += dx;
+    this._y += dy;
+  }
 }

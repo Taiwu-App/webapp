@@ -1,7 +1,7 @@
-import {observer} from 'mobx-react';
 import * as React from 'react';
 
 import bindthis from '@/decorators/bindthis';
+import draggable from '@/decorators/draggable';
 import { IGridInfo } from '@/models/village-map';
 
 export interface IBoardStore {
@@ -10,18 +10,23 @@ export interface IBoardStore {
   grids: IGridInfo[][];
   numberRows: number;
   numberColumns: number;
+
+  offsetRatio: (offset: number) => void;
 }
 
 export interface IBoardProps {
   store: IBoardStore;
 }
 
-@observer
+@draggable
 export default class Board extends React.Component<IBoardProps> {
   public render() {
     const { boardWidth: width, boardHeight: height, grids } = this.props.store;
     return (
-      <table className="build-plan__board">
+      <table
+        className="build-plan__board"
+        onWheel={this.handleWheelZoom}
+      >
         <tbody style={{ height, width, display: 'block'}}>
           { grids.map(this.renderRow) }
         </tbody>
@@ -62,5 +67,12 @@ export default class Board extends React.Component<IBoardProps> {
         {text}
       </td>
     );
+  }
+  
+  @bindthis
+  private handleWheelZoom(ev: React.WheelEvent<HTMLTableElement>) {
+    // console.log(ev.deltaY);
+    const offset = ev.deltaY > 0 ? 10 : -10;
+    this.props.store.offsetRatio(offset);
   }
 }

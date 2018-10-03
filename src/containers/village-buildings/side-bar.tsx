@@ -1,4 +1,3 @@
-import { StandardLonghandProperties } from 'csstype';
 import { observer } from 'mobx-react';
 import * as React from 'react';
 
@@ -17,13 +16,13 @@ interface IProps {
   store: ISideBarStore;
 }
 
+export const containerStyle = {
+  marginLeft: 12,
+  width: 160
+};
+
 @observer
 export default class SideBar extends React.Component<IProps> {
-  public containerStyle: StandardLonghandProperties = {
-    marginLeft: '12px',
-    width: '160px'
-  };
-
   private iconClassName: string = 'build-plan-aside__icon';
 
   private get zoomRatio() {
@@ -56,7 +55,7 @@ export default class SideBar extends React.Component<IProps> {
     return (
       <aside
         className="build-plan-aside__container"
-        style={this.containerStyle}
+        style={containerStyle}
       >
         {/* tool bar begin */}
         <section className="build-plan-aside__tool-bar">
