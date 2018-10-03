@@ -113,9 +113,9 @@ export default class SideBar extends React.Component<IProps> {
     const container = document.createElement('div');
     const { pageX, pageY } = ev;
     const { cellSize } = this.props.store;
-    container.style.left = `${pageX - cellSize / 2}px`;
+    container.style.left = `${pageX - cellSize * 3 / 4}px`;
     container.style.position = 'absolute';
-    container.style.top = `${pageY - cellSize / 2}px`;
+    container.style.top = `${pageY - cellSize * 3 / 4}px`;
     // container.id='123123';
     const ref: React.RefObject<DraggablePlaceholder> = React.createRef();
 
