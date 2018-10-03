@@ -3,18 +3,28 @@ import { observer } from 'mobx-react';
 import * as React from 'react';
 
 import Slider from '@/components/slider';
-import moduleStore from '../module-store';
+import LocalStore from './store';
 import './style.less';
 
+interface IProps {
+  store?: LocalStore;
+}
+
 @observer
-export default class SideBar extends React.Component {
+export default class SideBar extends React.Component<IProps> {
+  public static defaultProps: IProps = {
+    store: new LocalStore()
+  };
   public containerStyle: StandardLonghandProperties = {
     marginLeft: '12px',
     width: '160px'
   };
-  
+
   private iconClassName: string = 'build-plan-aside__icon';
-  private get zoomRatio() { return moduleStore.cellSizeZoomRatio; }
+
+  private get zoomRatio() {
+    return this.props.store!.zoomRatio;
+  }
   // generate some class names dynamically
   private get zoomInIconClasses() {
     const classes = [this.iconClassName, `${this.iconClassName}--zoom-in`];
@@ -31,9 +41,14 @@ export default class SideBar extends React.Component {
   private get moveIconClasses() {
     return [this.iconClassName, `${this.iconClassName}--pan`, 'clickable'];
   }
+  private get sliderClasses() {
+    const classes = ['build-plan-aside__zoom-slider'];
+    if (this.props.store!.isZoomBarDragging) { classes.push('dragging'); }    
+    return classes;
+  }
 
   public render() {
-    const { cellSizeZoomRatio, handleZoomInClicked, HandleZoomOutClicked, setRatio } = moduleStore;
+    const { offsetRatio } = this.props.store!;
     return (
       <aside
         className="build-plan-aside__container"
@@ -44,16 +59,15 @@ export default class SideBar extends React.Component {
           <div className="build-plan-aside__zoom-container">
             <i
               className={this.zoomOutIconClasses.join(' ')}
-              onClick={HandleZoomOutClicked}
+              onClick={offsetRatio.bind(this.props.store, -10)}
             />
             <Slider
-              className="build-plan-aside__zoom-slider"
-              onChange={setRatio}
-              value={cellSizeZoomRatio}
+              className={this.sliderClasses.join(' ')}
+              store={this.props.store!.sliderStore}
             />
             <i
               className={this.zoomInIconClasses.join(' ')}
-              onClick={handleZoomInClicked}
+              onClick={offsetRatio.bind(this.props.store, 10)}
             />
           </div>
           <i className={this.moveIconClasses.join(' ')} />

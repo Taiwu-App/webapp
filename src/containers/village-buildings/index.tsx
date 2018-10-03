@@ -1,9 +1,11 @@
+import { observer } from 'mobx-react';
 import * as React from 'react';
 
 import bindthis from '@/decorators/bindthis';
 import { attachResizeListener, IDynamicSize } from '@/decorators/window-events-listener';
 import MessageChannel from '@/utils/message-channel';
 import Board from './board';
+import moduleStore from './module-store';
 import SideBar from './side-bar';
 import './style.less';
 
@@ -11,6 +13,7 @@ export interface IVillageBuildingsState extends IDynamicSize {
   boardWidth: number;
 }
 
+@observer
 class VillageBuildings extends React.Component<{}, IVillageBuildingsState> {
   private channel: MessageChannel;
   private containerRef: React.RefObject<HTMLMainElement> = React.createRef();
@@ -40,6 +43,7 @@ class VillageBuildings extends React.Component<{}, IVillageBuildingsState> {
         </div>
         <SideBar
           ref={this.sideBarRef}
+          store={moduleStore.sideBarStore}
         />
       </main>
     );

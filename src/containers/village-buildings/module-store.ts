@@ -1,31 +1,22 @@
-import { action, computed, observable } from 'mobx';
+import { computed, observable } from 'mobx';
+
+import SideBarStore from './side-bar/store';
 
 class BuildPlanning {
-  @observable public cellSizeZoomRatio = 30;
+  @observable public readonly sideBarStore = new SideBarStore();
 
+  // square grid size, width/height
   private minCellSize = 16;
   private maxCellSize = 128;
 
+  @computed public get cellSizeZoomRatio() {
+    return this.sideBarStore.zoomRatio;
+  }
+  public setCellSizeZoomRatio(ratio: number) {
+    this.sideBarStore.setRatio(ratio);
+  }
   @computed public get cellSize() {
     return (this.maxCellSize - this.minCellSize) * this.cellSizeZoomRatio / 100 + this.minCellSize;
-  }
-
-  // zoom change events
-  @action.bound public setRatio(ratio: number) {
-    this.cellSizeZoomRatio = ratio;
-  }
-  @action.bound public offsetRatio(offset: number) {
-    let ratio = this.cellSizeZoomRatio + offset;
-    if (ratio > 100)  { ratio = 100; }
-    else if (ratio < 0) { ratio = 0; }
-    this.setRatio(ratio);
-  }
-  // event handler
-  @action.bound public handleZoomInClicked() {
-    this.offsetRatio(10);
-  }
-  @action.bound public HandleZoomOutClicked() {
-    this.offsetRatio(-10);
   }
 }
 
