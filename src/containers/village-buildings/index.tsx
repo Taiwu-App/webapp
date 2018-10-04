@@ -5,7 +5,7 @@ import bindthis from '@/decorators/bindthis';
 import { attachResizeListener, IDynamicSize } from '@/decorators/window-events-listener';
 import Board from './board';
 import SideBar, { containerStyle as sideBarContainerStyle } from './side-bar';
-import store from './store';
+import ModuleStore from './stores';
 import './style.less';
 
 export interface IVillageBuildingsState extends IDynamicSize {
@@ -14,7 +14,8 @@ export interface IVillageBuildingsState extends IDynamicSize {
 
 @observer
 class VillageBuildings extends React.Component<{}, IVillageBuildingsState> {
-  private containerRef: React.RefObject<HTMLMainElement> = React.createRef();
+  private readonly containerRef: React.RefObject<HTMLMainElement> = React.createRef();
+  private readonly moduleStore: ModuleStore = new ModuleStore();
   constructor(props: any) {
     super(props);
     this.state = {
@@ -33,9 +34,9 @@ class VillageBuildings extends React.Component<{}, IVillageBuildingsState> {
           className="build-plan__middle-container"
           style={{maxWidth: this.state.boardWidth}}
         >
-          <Board store={store}/>
+          <Board store={this.moduleStore.boardStore}/>
         </div>
-        <SideBar store={store}/>
+        <SideBar store={this.moduleStore}/>
       </main>
     );
   }

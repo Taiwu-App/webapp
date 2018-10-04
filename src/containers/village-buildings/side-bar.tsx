@@ -1,27 +1,30 @@
 import { observer } from 'mobx-react';
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 
 import Slider from '@/components/slider';
 import { ISliderStore } from '@/components/slider/store';
-import bindthis from '@/decorators/bindthis';
 import { IPlaceholder } from '@/models/buildings';
-import Placeholder, { DraggablePlaceholder } from './placeholder';
+import Placeholder from './placeholder';
 import './style.less';
 
 export interface ISideBarStore {
-  cellSize: number;
   filteredPlaceholders: IPlaceholder[];
   isZoomBarDragging: boolean;
   sliderStore: ISliderStore;
   zoomRatio: number;
 
   offsetRatio: (offset: number) => any;
-  placeholderDraggingBegin: (ev: React.MouseEvent<HTMLElement>, ref: React.RefObject<DraggablePlaceholder>) => any;
+}
+
+export interface IModuleStore {
+  cellSize: number;
+  sideBarStore: ISideBarStore;
+
+  mountDraggablePlaceholder :(ev: React.MouseEvent<HTMLElement>, props: IPlaceholder) => any;
 }
 
 interface IProps {
-  store: ISideBarStore;
+  store: IModuleStore;
 }
 
 export const containerStyle = {
@@ -34,7 +37,7 @@ export default class SideBar extends React.Component<IProps> {
   private iconClassName: string = 'build-plan-aside__icon';
 
   private get zoomRatio() {
-    return this.props.store!.zoomRatio;
+    return this.props.store.sideBarStore.zoomRatio;
   }
   // generate some class names dynamically
   private get zoomInIconClasses() {
@@ -54,12 +57,14 @@ export default class SideBar extends React.Component<IProps> {
   }
   private get sliderClasses() {
     const classes = ['build-plan-aside__zoom-slider'];
-    if (this.props.store!.isZoomBarDragging) { classes.push('dragging'); }    
+    if (this.props.store.sideBarStore.isZoomBarDragging) { classes.push('dragging'); }    
     return classes;
   }
 
   public render() {
-    const { offsetRatio } = this.props.store!;
+    const { mountDraggablePlaceholder, sideBarStore } = this.props.store;
+    const { filteredPlaceholders, offsetRatio, sliderStore } = sideBarStore;
+    
     return (
       <aside
         className="build-plan-aside__container"
@@ -70,15 +75,15 @@ export default class SideBar extends React.Component<IProps> {
           <div className="build-plan-aside__zoom-container">
             <i
               className={this.zoomOutIconClasses.join(' ')}
-              onClick={offsetRatio.bind(this.props.store, -10)}
+              onClick={offsetRatio.bind(sideBarStore, -10)}
             />
             <Slider
               className={this.sliderClasses.join(' ')}
-              store={this.props.store!.sliderStore}
+              store={sliderStore}
             />
             <i
               className={this.zoomInIconClasses.join(' ')}
-              onClick={offsetRatio.bind(this.props.store, 10)}
+              onClick={offsetRatio.bind(sideBarStore, 10)}
             />
           </div>
           <i className={this.moveIconClasses.join(' ')} />
@@ -90,14 +95,14 @@ export default class SideBar extends React.Component<IProps> {
         {/* placeholders begin */}
         <div className="build-plan-aside__placeholder-scroll">
           <ul className="build-plan-aside__placeholder-list">
-            {this.props.store.filteredPlaceholders.map(
+            {filteredPlaceholders.map(
               p => (
                 <Placeholder
                   {...p}
                   key={p.name}
                   size={containerStyle.width / 2 - 1} 
                   className="build-plan-aside__placeholder"
-                  handleMousedown={this.createDraggablePlaceholder}
+                  handleMousedown={mountDraggablePlaceholder}
                 />
               )
             )}
@@ -107,27 +112,4 @@ export default class SideBar extends React.Component<IProps> {
       </aside>
     );
   } // render
-
-  // create a draggable element, then pass it to the store
-  @bindthis private createDraggablePlaceholder(ev: React.MouseEvent<HTMLElement>, props: IPlaceholder) {
-    const container = document.createElement('div');
-    const { pageX, pageY } = ev;
-    const { cellSize } = this.props.store;
-    container.style.left = `${pageX - cellSize * 3 / 4}px`;
-    container.style.position = 'absolute';
-    container.style.top = `${pageY - cellSize * 3 / 4}px`;
-    // container.id='123123';
-    const ref: React.RefObject<DraggablePlaceholder> = React.createRef();
-
-    document.getElementsByTagName('body')[0].appendChild(container);
-    ReactDOM.render(
-      <DraggablePlaceholder
-        ref={ref}
-        {...props}
-        size={cellSize}
-      />,
-      container
-    );
-    this.props.store.placeholderDraggingBegin(ev, ref);
-  }
 }

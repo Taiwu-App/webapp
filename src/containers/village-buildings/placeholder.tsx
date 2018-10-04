@@ -2,7 +2,7 @@ import { StandardLonghandProperties } from 'csstype';
 import * as React from 'react';
 
 import bindthis from '@/decorators/bindthis';
-import draggable from '@/decorators/draggable';
+import draggable, { IDragConfig } from '@/decorators/draggable';
 import { IPlaceholder } from '@/models/buildings';
 
 interface IProps extends IPlaceholder {
@@ -61,9 +61,14 @@ export default class Placeholder extends React.Component<IProps> {
   }
 }
 
-@draggable
-export class DraggablePlaceholder extends Placeholder{
-  // public componentWillUnmount() {
-  //   console.log('will be destroyed');
-  // }
+/**
+ * factory mode, generate draggable placeholder
+ * @param props placeholder props
+ * @param config draggable configures
+ * @return React node
+ */
+export function createDraggablePlaceholder(props:IProps ,config?: IDragConfig) {
+  const element = draggable(config)(Placeholder);
+  const node = React.createElement(element, props);
+  return node;
 }

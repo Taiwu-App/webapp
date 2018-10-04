@@ -18,7 +18,7 @@ export interface IBoardProps {
   store: IBoardStore;
 }
 
-@draggable
+@draggable()
 export default class Board extends React.Component<IBoardProps> {
   public render() {
     const { boardWidth: width, boardHeight: height, grids } = this.props.store;
