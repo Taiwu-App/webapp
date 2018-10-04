@@ -8,9 +8,10 @@ export interface IDragConfig {
   enableWheel?: boolean;
   store?: IDraggableStore;
 
-  onDragStart?: (ev: React.MouseEvent<HTMLElement>) => any;
-  onDragEnd?: (ev: MouseEvent) => any;
-  onDragMoving?: (ev: MouseEvent) => any;
+  onMounted?: (store: IDraggableStore) => any;
+  onDragStart?: (ev: React.MouseEvent<HTMLElement>, store: IDraggableStore) => any;
+  onDragEnd?: (ev: MouseEvent, store: IDraggableStore) => any;
+  onDragMoving?: (ev: MouseEvent, store: IDraggableStore) => any;
 }
 
 function applyDefaultConfig(config: IDragConfig) {
@@ -28,10 +29,18 @@ export default function draggable(config: IDragConfig = {}) {
     @observer
     class DraggableClass extends constructor {
       public readonly store: IDraggableStore;
+      private readonly containerRef: React.RefObject<HTMLDivElement> = React.createRef();
       constructor(...props: any[]) {
         super(...props);
         this.store = config.store!;
+        this.store.containerRef = this.containerRef;
       }
+
+      public componentDidMount() {
+        if (super.componentDidMount !== undefined) { super.componentDidMount(); }
+        if (config.onMounted !== undefined) { config.onMounted(this.store); }
+      }
+
       public render() {
         const className = `lt-draggable__container${this.store.isDragging ? ' dragging' : ''}`;
         const { x, y } = this.store.translate;
@@ -41,6 +50,7 @@ export default function draggable(config: IDragConfig = {}) {
             children={super.render()}
             onMouseDown={this.store.onDragStart}
             style={{ transform: `translate(${x}px, ${y}px)` }}
+            ref={this.containerRef}
           />
         );
       }

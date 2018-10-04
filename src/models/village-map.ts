@@ -1,5 +1,6 @@
+import { observable } from 'mobx';
+
 import { IPlaceholder } from './buildings';
-import Point2D from './coordinate-2d';
 import Matrix from './matrix';
 
 export interface IGridInfo {
@@ -15,7 +16,7 @@ export enum EGridStatus {
 
 export interface IVillageMap {
   grids: Matrix<IGridInfo>;
-  addPlaceholder: (position: Point2D, placeholder: IPlaceholder) => void;
+  setPlaceholderAt: (rowIdx: number, columnIdx: number, placeholder: IPlaceholder | null) => void;
 }
 
 /**
@@ -25,7 +26,7 @@ export interface IVillageMap {
  */
 export class VillageMap implements IVillageMap {
   // rows, columns
-  public readonly grids: Matrix<IGridInfo>;
+  @observable public readonly grids: Matrix<IGridInfo>;
   /**
    * @constructor
    * @param size [rows, columns]
@@ -37,7 +38,7 @@ export class VillageMap implements IVillageMap {
     });
   }
 
-  public addPlaceholder(position: Point2D, placeholder: IPlaceholder): void {
-    this.grids[position.x][position.y].placeholder = placeholder;
+  public setPlaceholderAt(rowIdx: number, columnIdx: number, placeholder: IPlaceholder | null): void {
+    this.grids.valueAt(rowIdx, columnIdx).placeholder = placeholder;
   }
 }

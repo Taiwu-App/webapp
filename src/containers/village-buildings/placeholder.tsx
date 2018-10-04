@@ -24,7 +24,7 @@ export default class Placeholder extends React.Component<IProps> {
       lineHeight: `${this.props.size}px`,
       width: `${this.props.size}px`,
     };
-    if (this.props.icon.includes('.')) {
+    if (this.props.icon !== undefined && this.props.icon.includes('.')) {
       if (this.props.icon.includes('http')) {
         style.backgroundImage = `url(${this.props.icon})`;
       } else {
@@ -67,8 +67,7 @@ export default class Placeholder extends React.Component<IProps> {
  * @param config draggable configures
  * @return React node
  */
-export function createDraggablePlaceholder(props:IProps ,config?: IDragConfig) {
+export function createDraggablePlaceholder(props:IProps ,config: IDragConfig = {}) {
   const element = draggable(config)(Placeholder);
-  const node = React.createElement(element, props);
-  return node;
+  return React.createElement(element, props);
 }

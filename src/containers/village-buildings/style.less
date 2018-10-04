@@ -37,8 +37,8 @@
   grid-template-columns: 50% 50%;
   & > .build-plan-aside__placeholder {
     cursor: grab;
-    border-top: none;
-    border-left: none;
+    border-bottom: 1px solid rgb(214, 214, 214);
+    border-right: 1px solid rgb(214, 214, 214);
     &:nth-child(even) {
       border-right: none;
     }
@@ -96,7 +96,8 @@
 }
 
 .build-plan__board-cell {
-  display: inline-block;
+  display: inline-flex;
+  overflow: hidden;
   height: 100%;
   padding: 0;
   border: 1px solid black;
@@ -112,5 +113,4 @@
   font-size: 20px;
   font-weight: bold;
   user-select: none;
-  border: 1px solid rgb(214, 214, 214);
 }

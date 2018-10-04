@@ -34,7 +34,7 @@ class VillageBuildings extends React.Component<{}, IVillageBuildingsState> {
           className="build-plan__middle-container"
           style={{maxWidth: this.state.boardWidth}}
         >
-          <Board store={this.moduleStore.boardStore}/>
+          <Board store={this.moduleStore}/>
         </div>
         <SideBar store={this.moduleStore}/>
       </main>

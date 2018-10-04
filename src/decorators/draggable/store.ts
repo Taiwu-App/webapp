@@ -4,6 +4,7 @@ import Point2D from '@/models/coordinate-2d';
 
 
 export interface IDraggableStore {
+  containerRef: React.RefObject<HTMLDivElement>;
   isDragging: boolean;
   translate: Point2D;
 
@@ -11,9 +12,9 @@ export interface IDraggableStore {
   onDragMoving: (ev: MouseEvent) => void;
   onDragStart: (ev: React.MouseEvent<HTMLElement>) => any;
 
-  dragStartCallback?: (ev: React.MouseEvent<HTMLElement>) => any;
-  dragEndCallback?: (ev: MouseEvent) => any;
-  dragMovingCallback?: (ev: MouseEvent) => any;
+  dragStartCallback?: (ev: React.MouseEvent<HTMLElement>, store: IDraggableStore) => any;
+  dragEndCallback?: (ev: MouseEvent, store: IDraggableStore) => any;
+  dragMovingCallback?: (ev: MouseEvent, store: IDraggableStore) => any;
 }
 
 /**
@@ -23,9 +24,9 @@ export interface IDraggableStore {
 export class DraggableStore implements IDraggableStore {
   // private ref: React.RefObject<HTMLDivElement>;
   // life cycle hooks
-  public dragStartCallback: undefined | ((ev: React.MouseEvent<HTMLElement>) => any);
-  public dragEndCallback: undefined | ((ev: MouseEvent) => any);
-  public dragMovingCallback: undefined | ((ev: MouseEvent) => any);
+  public dragStartCallback: undefined | ((ev: React.MouseEvent<HTMLElement>, store: IDraggableStore) => any);
+  public dragEndCallback: undefined | ((ev: MouseEvent, store: IDraggableStore) => any);
+  public dragMovingCallback: undefined | ((ev: MouseEvent, store: IDraggableStore) => any);
 
   private clickedPos: Point2D = new Point2D(0, 0);
   private oldTranslate: Point2D = new Point2D(0, 0);
@@ -40,9 +41,12 @@ export class DraggableStore implements IDraggableStore {
     return this._isDragging;
   }
 
+  constructor(public readonly containerRef: React.RefObject<HTMLDivElement> = { current: null }){}
+
   @action.bound public onDragStart(ev: React.MouseEvent<HTMLElement>) {
     if (ev.button !== 0) { return; }
     ev.preventDefault();
+    ev.stopPropagation();
     const { pageX, pageY } = ev;
     this.oldTranslate = new Point2D(this.translate.x, this.translate.y);
     this.clickedPos = new Point2D(pageX, pageY);
@@ -51,7 +55,7 @@ export class DraggableStore implements IDraggableStore {
     window.addEventListener('mousemove', this.onDragMoving, true);
     window.addEventListener('mouseup', this.onDragEnd, true);
     window.addEventListener('wheel', this.onWheel, true);
-    if (this.dragStartCallback !== undefined) { this.dragStartCallback(ev); }
+    if (this.dragStartCallback !== undefined) { this.dragStartCallback(ev, this); }
   }
 
   @action.bound public onDragEnd(ev: MouseEvent) {
@@ -61,12 +65,12 @@ export class DraggableStore implements IDraggableStore {
     window.removeEventListener('mousemove', this.onDragMoving, true);
     window.removeEventListener('mouseup', this.onDragEnd, true);
     window.removeEventListener('wheel', this.onWheel, true);
-    if (this.dragEndCallback !== undefined) { this.dragEndCallback(ev); }
+    if (this.dragEndCallback !== undefined) { this.dragEndCallback(ev, this); }
   }
 
   @action.bound public onDragMoving(ev: MouseEvent) {
     this.mousePos = new Point2D(ev.pageX, ev.pageY);
-    if (this.dragMovingCallback !== undefined) { this.dragMovingCallback(ev); }
+    if (this.dragMovingCallback !== undefined) { this.dragMovingCallback(ev, this); }
   }
 
   @action.bound public onWheel(ev: WheelEvent) {
