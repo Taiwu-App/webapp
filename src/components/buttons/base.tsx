@@ -6,7 +6,7 @@ import './style.less';
 
 export interface IBaseButton {
   className?: string;
-  type?: 'primary' | 'default';
+  type?: 'primary' | 'default' | 'warning';
 
   onClick?: (ev: React.MouseEvent<HTMLAnchorElement>) => any;
 }

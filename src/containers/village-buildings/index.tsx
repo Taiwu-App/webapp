@@ -72,6 +72,7 @@ export default class VillageBuildings extends React.Component<IProps> {
                   <BaseButton
                     className="build-plan__tips-button build-plan__tips-button--clear"
                     onClick={this.handleClear}
+                    type="warning"
                   >
                     清空布局
                   </BaseButton>
@@ -100,6 +101,7 @@ export default class VillageBuildings extends React.Component<IProps> {
   @bindthis private handleSave(): void {
     const token = this.moduleStore.boardStore.map.asBase64;
     this.props.history.push(`buildings?${token}`);
+    alert('已保存, 复制链接地址即可');
   }
   @bindthis private handleClear() {
     this.moduleStore.boardStore.recoverFromToken('');
