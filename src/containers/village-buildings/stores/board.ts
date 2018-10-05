@@ -7,11 +7,6 @@ import Point2D from '@/models/coordinate-2d';
 import { IGridInfo, IVillageMap, VillageMap } from '@/models/village-map';
 import { IBoardStore } from '../board';
 
-export interface IPlaceholderOnBoard extends IPlaceholder {
-  rowIdx?: number;
-  columnIdx?: number;
-}
-
 export default class BoardStore implements IBoardStore {
   // board size
   public readonly numberRows = 13;
@@ -21,7 +16,7 @@ export default class BoardStore implements IBoardStore {
   
   @observable public readonly sliderStore:ISliderStore;
 
-  @observable private readonly map: IVillageMap;
+  @observable public readonly map: IVillageMap;
   // square grid size, width/height
   private readonly minCellSize = 32;
   private readonly maxCellSize = 256;
@@ -29,6 +24,10 @@ export default class BoardStore implements IBoardStore {
   constructor(sliderStore: ISliderStore) {
     this.sliderStore = sliderStore;
     this.map = new VillageMap(this.numberRows, this.numberColumns);
+  }
+
+  @computed public get buildingCount(): number {
+    return this.map.count;
   }
 
   @computed public get zoomRatio(): number {
@@ -47,7 +46,7 @@ export default class BoardStore implements IBoardStore {
   @computed public get boardHeight(): number {
     return this.cellSize * this.numberRows;
   }
-  // top-left point, coordinate are corresponding to ClientX, ClientY
+  // top-left point of the table, coordinates are corresponding to ClientX, ClientY
   @computed private get boardPosition(): Point2D {
     const box = this.tableRef.current!.children[0].getBoundingClientRect();
     return new Point2D(box.left, box.top);
@@ -56,12 +55,17 @@ export default class BoardStore implements IBoardStore {
     return this.map.grids.vals;
   }
 
-  @bindthis public handleDrop(position: Point2D, props: IPlaceholderOnBoard) {
+  /**
+   * 
+   * @param position Client position
+   * @param props if props is null, this function will do nothing
+   */
+  @bindthis public handleDrop(position: Point2D, props: IPlaceholder | null) {
+    if (props === null) { return; }
+    if (!this.isInVisibleArea(position)) { return this.resetDragging(props); }
     const [rowIdx, columnIdx] = this.getCellIdxByCoords(position);
     if (rowIdx < this.numberRows && columnIdx < this.numberColumns) {
       this.replacePlaceholderAt(rowIdx, columnIdx, props);
-    } else {
-      this.resetDragging(props);
     }
   }
   // return [rowIdx, columnIdx]
@@ -71,17 +75,29 @@ export default class BoardStore implements IBoardStore {
     const rowIdx = Math.floor(offset.y / this.cellSize);
     return [rowIdx, columnIdx];
   }
-  @action.bound private replacePlaceholderAt(rowIdx: number, columnIdx: number, props: IPlaceholderOnBoard) {
-    this.map.setPlaceholderAt(rowIdx, columnIdx, props);
+  @action.bound private replacePlaceholderAt(rowIdx: number, columnIdx: number, props: IPlaceholder) {
     const { rowIdx: oldRowIdx = -1, columnIdx: oldColumnIdx = -1 } = props;
     if (oldRowIdx > -1 && oldColumnIdx > -1) {
       this.map.setPlaceholderAt(oldRowIdx, oldColumnIdx, null);
     }
-    // console.log(props);
-    // this.map.grids = [...this.map.grids];
-    // console.log(this.map.grids);
+    this.map.setPlaceholderAt(rowIdx, columnIdx, props);
   }
-  @action.bound private resetDragging(props: IPlaceholderOnBoard) {
+  @action.bound public removePlaceholderAt(rowIdx: number, columnIdx: number) {
+    if (rowIdx < 0 || columnIdx < 0) { return; }
+    this.map.setPlaceholderAt(rowIdx, columnIdx, null);
+  }
+  @action.bound private resetDragging(props: IPlaceholder) {
     if (props.rowIdx === undefined || props.columnIdx === undefined) { return; }
+    this.replacePlaceholderAt(props.rowIdx, props.columnIdx, props);
+  }
+  /**
+   * is the position in the visible area (the board-frame)
+   * @param position (ClientX, ClientY)
+   */
+  private isInVisibleArea(position: Point2D): boolean {
+    const visibleContainer = this.tableRef.current!.parentElement!.parentElement!;
+    const box = visibleContainer.getBoundingClientRect();
+    return (position.x > box.left && position.x < box.left + box.width &&
+      position.y > box.top && position.y < box.top + box.height);
   }
 }

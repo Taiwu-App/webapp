@@ -28,6 +28,7 @@ const buildingInfos: IBuilding[] = [{
   name: '居所'
 }].map(d => ({
   backgroundColor: 'white',
+  isArtificial: true,
   textColor: '',
   ...d
 }));

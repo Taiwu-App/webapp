@@ -95,7 +95,7 @@ export default class Board extends React.Component<IBoardProps> {
   private renderPlaceholder(props: IPlaceholder | null, rowIdx: number, columnIdx: number) {
     if (props === null) { return null; }
     const node = createDraggablePlaceholder({
-      ...props,
+      info: props,
       size: this.localStore.cellSize
     }, {
       onDragEnd: this.props.store.placeholderDragEnd,

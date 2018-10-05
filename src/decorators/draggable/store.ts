@@ -1,20 +1,25 @@
 import { action, computed, observable } from 'mobx';
+import * as React from 'react';
 
 import Point2D from '@/models/coordinate-2d';
+import bindthis from '../bindthis';
 
+export type UnionMouseEvent = MouseEvent | React.MouseEvent<HTMLElement>;
 
 export interface IDraggableStore {
   containerRef: React.RefObject<HTMLDivElement>;
   isDragging: boolean;
   translate: Point2D;
 
-  onDragEnd: (ev: MouseEvent) => void;
-  onDragMoving: (ev: MouseEvent) => void;
-  onDragStart: (ev: React.MouseEvent<HTMLElement>) => any;
+  handleMouseDown: (ev: React.MouseEvent<HTMLElement>) => any;
 
-  dragStartCallback?: (ev: React.MouseEvent<HTMLElement>, store: IDraggableStore) => any;
-  dragEndCallback?: (ev: MouseEvent, store: IDraggableStore) => any;
-  dragMovingCallback?: (ev: MouseEvent, store: IDraggableStore) => any;
+  endDrag: (ev: UnionMouseEvent) => void;
+  onDragMoving: (ev: UnionMouseEvent) => void;
+  startDrag: (ev: UnionMouseEvent) => any;
+
+  dragStartCallback?: (ev: UnionMouseEvent, store: IDraggableStore) => any;
+  dragEndCallback?: (ev: UnionMouseEvent, store: IDraggableStore) => any;
+  dragMovingCallback?: (ev: UnionMouseEvent, store: IDraggableStore) => any;
 }
 
 /**
@@ -24,9 +29,9 @@ export interface IDraggableStore {
 export class DraggableStore implements IDraggableStore {
   // private ref: React.RefObject<HTMLDivElement>;
   // life cycle hooks
-  public dragStartCallback: undefined | ((ev: React.MouseEvent<HTMLElement>, store: IDraggableStore) => any);
-  public dragEndCallback: undefined | ((ev: MouseEvent, store: IDraggableStore) => any);
-  public dragMovingCallback: undefined | ((ev: MouseEvent, store: IDraggableStore) => any);
+  public dragStartCallback?: (ev: UnionMouseEvent, store: IDraggableStore) => any;
+  public dragEndCallback?: (ev: UnionMouseEvent, store: IDraggableStore) => any;
+  public dragMovingCallback?: (ev: UnionMouseEvent, store: IDraggableStore) => any;
 
   private clickedPos: Point2D = new Point2D(0, 0);
   private oldTranslate: Point2D = new Point2D(0, 0);
@@ -43,32 +48,39 @@ export class DraggableStore implements IDraggableStore {
 
   constructor(public readonly containerRef: React.RefObject<HTMLDivElement> = { current: null }){}
 
-  @action.bound public onDragStart(ev: React.MouseEvent<HTMLElement>) {
+  @bindthis public handleMouseDown(ev: React.MouseEvent<HTMLElement>) {
     if (ev.button !== 0) { return; }
+    this.startDrag(ev);
+  }
+  @action.bound public startDrag(ev: UnionMouseEvent) {
     ev.preventDefault();
     ev.stopPropagation();
-    const { pageX, pageY } = ev;
     this.oldTranslate = new Point2D(this.translate.x, this.translate.y);
-    this.clickedPos = new Point2D(pageX, pageY);
-    this.mousePos = new Point2D(pageX, pageY);
+    const position = new Point2D(ev.pageX, ev.pageY);
+    this.clickedPos = position;
+    this.mousePos = position.clone();
     this._isDragging = true;
     window.addEventListener('mousemove', this.onDragMoving, true);
-    window.addEventListener('mouseup', this.onDragEnd, true);
+    window.addEventListener('mouseup', this.handleMouseUp, true);
     window.addEventListener('wheel', this.onWheel, true);
     if (this.dragStartCallback !== undefined) { this.dragStartCallback(ev, this); }
   }
 
-  @action.bound public onDragEnd(ev: MouseEvent) {
+  @bindthis public handleMouseUp(ev: MouseEvent) {
+    if (ev.button !== 0) { return; }
+    this.endDrag(ev);
+  }
+  @action.bound public endDrag(ev: UnionMouseEvent) {
     ev.preventDefault();
     ev.stopPropagation();
     this._isDragging = false;
     window.removeEventListener('mousemove', this.onDragMoving, true);
-    window.removeEventListener('mouseup', this.onDragEnd, true);
+    window.removeEventListener('mouseup', this.handleMouseUp, true);
     window.removeEventListener('wheel', this.onWheel, true);
     if (this.dragEndCallback !== undefined) { this.dragEndCallback(ev, this); }
   }
 
-  @action.bound public onDragMoving(ev: MouseEvent) {
+  @action.bound public onDragMoving(ev: UnionMouseEvent) {
     this.mousePos = new Point2D(ev.pageX, ev.pageY);
     if (this.dragMovingCallback !== undefined) { this.dragMovingCallback(ev, this); }
   }

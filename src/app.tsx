@@ -8,16 +8,25 @@ import RouterView from './routers';
 
 export default class App extends React.Component {
   public render() {
-    return (
-      <div className="root">
-        <TopHeader className="layout__head"/>
-        {/* begin of main */}
-        <div className="layout__body">
+    return [
+      (<TopHeader className="layout__head" key="header"/>),
+      (
+        <div className="layout__body" key="body">
           <SideMenu />
           <RouterView />
         </div>
-        {/* end of main */}
-      </div>
-    );
+      )
+    ];
+    // return (
+    //   <div className="root">
+    //     <TopHeader className="layout__head"/>
+    //     {/* begin of main */}
+    //     <div className="layout__body">
+    //       <SideMenu />
+    //       <RouterView />
+    //     </div>
+    //     {/* end of main */}
+    //   </div>
+    // );
   }
 }

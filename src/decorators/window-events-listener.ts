@@ -1,19 +1,19 @@
 import * as React from 'react';
 
-export interface IDynamicSize {
-  handleResize: () => void;
-}
+export function onResize(target: React.Component, name: string) {
+  const originMount = target.componentDidMount;
+  let func: () => any;
+  // tslint-disable-next-line
+  target.componentDidMount = function() {
+    func = this[name].bind(this);
+    if (originMount !== undefined) { originMount.call(this); }
+    func();
+    window.addEventListener('resize', func);
+  };
 
-export function attachResizeListener<T extends {new(...args:any[]): React.Component<any, IDynamicSize>}> (constructor:T) {
-  return class extends constructor {
-    public componentDidMount() {
-      if (super.componentDidMount !== undefined) { super.componentDidMount(); }
-      window.addEventListener('resize', this.state.handleResize);
-      this.state.handleResize();
-    }
-    public componentWillUnmount() {
-      if (super.componentWillUnmount !== undefined) { super.componentWillUnmount(); }
-      window.removeEventListener('resize', this.state.handleResize);
-    }
+  const originUnMount = target.componentWillUnmount;
+  target.componentWillUnmount = function() {
+    if (originUnMount !== undefined) { originUnMount.call(this); }
+    window.removeEventListener('resize', func);
   };
 }

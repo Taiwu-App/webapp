@@ -20,7 +20,7 @@ export interface IModuleStore {
   cellSize: number;
   sideBarStore: ISideBarStore;
 
-  mountDraggablePlaceholder :(ev: React.MouseEvent<HTMLElement>, props: IPlaceholder) => any;
+  mountDraggablePlaceholderFromSidebar :(ev: React.MouseEvent<HTMLElement>, props: IPlaceholder) => any;
 }
 
 interface IProps {
@@ -52,9 +52,6 @@ export default class SideBar extends React.Component<IProps> {
     else { classes.push('clickable'); }
     return classes;
   }
-  private get moveIconClasses() {
-    return [this.iconClassName, `${this.iconClassName}--pan`, 'clickable'];
-  }
   private get sliderClasses() {
     const classes = ['build-plan-aside__zoom-slider'];
     if (this.props.store.sideBarStore.isZoomBarDragging) { classes.push('dragging'); }    
@@ -62,9 +59,8 @@ export default class SideBar extends React.Component<IProps> {
   }
 
   public render() {
-    const { mountDraggablePlaceholder, sideBarStore } = this.props.store;
+    const { mountDraggablePlaceholderFromSidebar, sideBarStore } = this.props.store;
     const { filteredPlaceholders, offsetRatio, sliderStore } = sideBarStore;
-    
     return (
       <aside
         className="build-plan-aside__container"
@@ -72,21 +68,18 @@ export default class SideBar extends React.Component<IProps> {
       >
         {/* tool bar begin */}
         <section className="build-plan-aside__tool-bar">
-          <div className="build-plan-aside__zoom-container">
-            <i
-              className={this.zoomOutIconClasses.join(' ')}
-              onClick={offsetRatio.bind(sideBarStore, -10)}
-            />
-            <Slider
-              className={this.sliderClasses.join(' ')}
-              store={sliderStore}
-            />
-            <i
-              className={this.zoomInIconClasses.join(' ')}
-              onClick={offsetRatio.bind(sideBarStore, 10)}
-            />
-          </div>
-          <i className={this.moveIconClasses.join(' ')} />
+          <i
+            className={this.zoomOutIconClasses.join(' ')}
+            onClick={offsetRatio.bind(sideBarStore, -10)}
+          />
+          <Slider
+            className={this.sliderClasses.join(' ')}
+            store={sliderStore}
+          />
+          <i
+            className={this.zoomInIconClasses.join(' ')}
+            onClick={offsetRatio.bind(sideBarStore, 10)}
+          />
         </section>
         {/* tool bar end */}
 
@@ -98,11 +91,11 @@ export default class SideBar extends React.Component<IProps> {
             {filteredPlaceholders.map(
               p => (
                 <Placeholder
-                  {...p}
+                  info={p}
                   key={p.name}
                   size={containerStyle.width / 2 - 1} 
                   className="build-plan-aside__placeholder"
-                  handleMousedown={mountDraggablePlaceholder}
+                  handleMousedown={mountDraggablePlaceholderFromSidebar}
                 />
               )
             )}

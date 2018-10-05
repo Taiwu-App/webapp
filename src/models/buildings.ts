@@ -12,6 +12,11 @@ export enum EFunction {
   others
 }
 
+export enum EPlaceholderType {
+  building,
+  landscape
+}
+
 // book requirement
 export interface IBookInfo {
   exp: number;
@@ -32,9 +37,13 @@ export interface ILimitation {
 export interface IPlaceholder {
   description: string;
   icon: string;
+  isArtificial: boolean;
   name: string;
   textColor: string;
   backgroundColor: string;
+
+  rowIdx?: number;
+  columnIdx?: number;
 }
 
 export abstract class Placeholder implements IPlaceholder {
@@ -43,12 +52,16 @@ export abstract class Placeholder implements IPlaceholder {
   public readonly name: string;
   public readonly textColor: string;
   public readonly backgroundColor: string;
+  protected type: EPlaceholderType;
+
+  public get isArtificial() { return this.type === EPlaceholderType.building; }
 
   constructor(params: IPlaceholder) {
     const { description = '', icon = '', name = '', textColor = '', backgroundColor = '' } = params;
     this.description = description;
     this.icon = icon;
     this.name = name;
+    this.type = EPlaceholderType.landscape;
 
     this.textColor = textColor;
     this.backgroundColor = backgroundColor;
@@ -67,6 +80,7 @@ export class Building extends Placeholder implements IBuilding {
   public readonly limitations: ILimitation[];
   constructor(params: IBuilding) {
     super(params);
+    this.type = EPlaceholderType.building;
     this.bookInfo = params.bookInfo;
     const { functions = [], limitations = [] } = params;
     if (functions.length === 0) { this.functions = [EFunction.others]; }

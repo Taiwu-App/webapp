@@ -5,8 +5,9 @@ import bindthis from '@/decorators/bindthis';
 import draggable, { IDragConfig } from '@/decorators/draggable';
 import { IPlaceholder } from '@/models/buildings';
 
-interface IProps extends IPlaceholder {
+interface IProps {
   className?: string;
+  info: IPlaceholder;
   size: number;
   handleMousedown?: (ev: React.MouseEvent<HTMLElement>, prop: IPlaceholder) => any;
 }
@@ -17,26 +18,28 @@ export default class Placeholder extends React.Component<IProps> {
     styles: {}
   };
   private get style() {
+    const info = this.props.info;
     const style: StandardLonghandProperties = {
-      backgroundColor: this.props.backgroundColor,
-      color: this.props.textColor,
+      backgroundColor: info.backgroundColor,
+      color: info.textColor,
       height: `${this.props.size}px`,
       lineHeight: `${this.props.size}px`,
       width: `${this.props.size}px`,
     };
-    if (this.props.icon !== undefined && this.props.icon.includes('.')) {
-      if (this.props.icon.includes('http')) {
-        style.backgroundImage = `url(${this.props.icon})`;
+    if (info.icon !== undefined && info.icon.includes('.')) {
+      if (info.icon.includes('http')) {
+        style.backgroundImage = `url(${info.icon})`;
       } else {
-        style.backgroundImage = `url(~@/assets/images/${this.props.icon})`;
+        style.backgroundImage = `url(~@/assets/images/${info.icon})`;
       }
     }
     return style;
   }
 
   private get content() {
-    if (this.props.icon.includes('.')) { return ''; }
-    else { return this.props.icon; }
+    const info = this.props.info;
+    if (info.icon.includes('.')) { return ''; }
+    else { return info.icon; }
   }
 
   public render() {
@@ -53,11 +56,7 @@ export default class Placeholder extends React.Component<IProps> {
 
   @bindthis private handleMousedown(ev: React.MouseEvent<HTMLElement>) {
     if (this.props.handleMousedown === undefined || ev.button !== 0) { return; }
-    const props = { ...this.props };
-    delete props.handleMousedown;
-    delete props.className;
-    delete props.size;
-    this.props.handleMousedown(ev, props);
+    this.props.handleMousedown(ev, this.props.info);
   }
 }
 

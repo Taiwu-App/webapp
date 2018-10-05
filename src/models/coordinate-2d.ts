@@ -20,4 +20,8 @@ export default class Coordinate2D {
     this._x += dx;
     this._y += dy;
   }
+
+  public clone(): Coordinate2D {
+    return new Coordinate2D(this.x, this.y);
+  }
 }

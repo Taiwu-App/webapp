@@ -48,7 +48,7 @@ export default function draggable(config: IDragConfig = {}) {
           <div
             className={className}
             children={super.render()}
-            onMouseDown={this.store.onDragStart}
+            onMouseDown={this.store.handleMouseDown}
             style={{ transform: `translate(${x}px, ${y}px)` }}
             ref={this.containerRef}
           />
