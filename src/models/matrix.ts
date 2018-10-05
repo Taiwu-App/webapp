@@ -27,6 +27,10 @@ export default class Matrix<T> {
     return this.vals[rowIdx][columnIdx];
   }
 
+  @bindthis public setValueAt(rowIdx: number, columnIdx: number, val: T) {
+    this.vals[rowIdx][columnIdx] = val;
+  }
+
   private isFunction(functionToCheck: any): boolean {
     return functionToCheck && {}.toString.call(functionToCheck) === '[object Function]';
   }

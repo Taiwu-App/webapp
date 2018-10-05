@@ -56,7 +56,6 @@ export default class BoardStore implements IBoardStore {
   }
 
   /**
-   * 
    * @param position Client position
    * @param props if props is null, this function will do nothing
    */
@@ -64,8 +63,10 @@ export default class BoardStore implements IBoardStore {
     if (props === null) { return; }
     if (!this.isInVisibleArea(position)) { return this.resetDragging(props); }
     const [rowIdx, columnIdx] = this.getCellIdxByCoords(position);
-    if (rowIdx < this.numberRows && columnIdx < this.numberColumns) {
-      this.replacePlaceholderAt(rowIdx, columnIdx, props);
+    if (rowIdx < this.numberRows && columnIdx < this.numberColumns && rowIdx > -1 && columnIdx > -1) {
+      this.replacePlaceholderAt(props, rowIdx, columnIdx);
+    } else {
+      this.replacePlaceholderAt(props, props.rowIdx, props.columnIdx);
     }
   }
   // return [rowIdx, columnIdx]
@@ -75,20 +76,22 @@ export default class BoardStore implements IBoardStore {
     const rowIdx = Math.floor(offset.y / this.cellSize);
     return [rowIdx, columnIdx];
   }
-  @action.bound private replacePlaceholderAt(rowIdx: number, columnIdx: number, props: IPlaceholder) {
+  @action.bound private replacePlaceholderAt(props: IPlaceholder, rowIdx?: number, columnIdx?: number) {
     const { rowIdx: oldRowIdx = -1, columnIdx: oldColumnIdx = -1 } = props;
     if (oldRowIdx > -1 && oldColumnIdx > -1) {
       this.map.setPlaceholderAt(oldRowIdx, oldColumnIdx, null);
     }
-    this.map.setPlaceholderAt(rowIdx, columnIdx, props);
+    if (rowIdx !== undefined && columnIdx !== undefined) {
+      this.map.setPlaceholderAt(rowIdx, columnIdx, props);
+    }
   }
   @action.bound public removePlaceholderAt(rowIdx: number, columnIdx: number) {
     if (rowIdx < 0 || columnIdx < 0) { return; }
     this.map.setPlaceholderAt(rowIdx, columnIdx, null);
   }
-  @action.bound private resetDragging(props: IPlaceholder) {
+  @action.bound public resetDragging(props: IPlaceholder) {
     if (props.rowIdx === undefined || props.columnIdx === undefined) { return; }
-    this.replacePlaceholderAt(props.rowIdx, props.columnIdx, props);
+    this.replacePlaceholderAt(props, props.rowIdx, props.columnIdx);
   }
   /**
    * is the position in the visible area (the board-frame)
@@ -99,5 +102,9 @@ export default class BoardStore implements IBoardStore {
     const box = visibleContainer.getBoundingClientRect();
     return (position.x > box.left && position.x < box.left + box.width &&
       position.y > box.top && position.y < box.top + box.height);
+  }
+
+  @action.bound public recoverFromToken(token: string): boolean {
+    return this.map.tryRecoveryFromToken(token);
   }
 }

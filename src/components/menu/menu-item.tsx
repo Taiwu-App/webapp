@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import './style.less';
+
 export interface IMenuItemProps {
   className?: string;
 }

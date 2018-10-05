@@ -4,6 +4,7 @@ import * as React from 'react';
 import bindthis from '@/decorators/bindthis';
 import draggable, { IDragConfig } from '@/decorators/draggable';
 import { IPlaceholder } from '@/models/buildings';
+import './style.less';
 
 interface IProps {
   className?: string;
@@ -44,13 +45,13 @@ export default class Placeholder extends React.Component<IProps> {
 
   public render() {
     return (
-      <li
+      <div
         className={`build-plan__placeholder ${this.props.className}`}
         style={this.style}
         onMouseDown={this.handleMousedown}
       >
         {this.content}
-      </li>
+      </div>
     );
   }
 

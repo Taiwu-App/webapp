@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import './style.less';
+
 export interface IMenuProps {
   className?: string;
 }
@@ -14,9 +16,9 @@ export default class Menu extends React.Component<IMenuProps> {
 
   public render() {
     return (
-      <ul className={`lt-menu ${this.props.className}`}>
+      <menu className={`lt-menu ${this.props.className}`}>
         {this.props.children}
-      </ul>
+      </menu>
     );
   }
 }

@@ -5,7 +5,8 @@ import draggable from '@/decorators/draggable';
 import { IDraggableStore } from '@/decorators/draggable/store';
 import { IPlaceholder } from '@/models/buildings';
 import { IGridInfo } from '@/models/village-map';
-import { createDraggablePlaceholder } from './placeholder';
+import { createDraggablePlaceholder } from '../placeholder';
+import './style.less';
 
 export interface IBoardStore {
   boardHeight: number;

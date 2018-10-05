@@ -11,4 +11,4 @@ npm run start
 npm run build
 
 ```
-This is an PC project.
+This is a PC project.

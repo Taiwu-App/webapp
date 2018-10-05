@@ -1,0 +1,22 @@
+.build-plan__board {
+  background: white;
+  padding: 24px;
+}
+
+.build-plan__board-row {
+  display: block;
+  &:not(:first-child) > .build-plan__board-cell {
+    border-top: none;
+  }
+}
+
+.build-plan__board-cell {
+  display: inline-flex;
+  overflow: hidden;
+  height: 100%;
+  padding: 0;
+  border: 1px solid black;
+  &:not(:first-child) {
+    border-left: none;
+  }
+}

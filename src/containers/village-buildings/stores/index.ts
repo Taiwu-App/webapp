@@ -16,11 +16,13 @@ export default class ModuleStore implements ISideBarGlobalStore, IBoardGlobalSto
   public readonly sideBarStore: SideBarStore;
   @observable public displayedBoardWidth: number = 0;
   @observable private draggingPlaceholder: IPlaceholder | null = null;
+  private draggingStore: IDraggableStore | null = null;
   // div container to mount the draggable placeholder
   private _draggableContainer: HTMLDivElement;
   private get draggableContainer() {
     if (this._draggableContainer === undefined) {
       this._draggableContainer = document.createElement('div');
+      this._draggableContainer.style.display = 'none';
       document.getElementsByTagName('body')[0].appendChild(this._draggableContainer);
     }
     return this._draggableContainer;
@@ -38,7 +40,7 @@ export default class ModuleStore implements ISideBarGlobalStore, IBoardGlobalSto
   // tips at the top of the border
   @computed public get tipsMessage(): string {
     if (this.draggingPlaceholder !== null) {
-      return '按右键删除当前拖动元素';
+      return '按右键取消拖拽;按DELETE删除当前元素';
     } else { return ''; }
   }
 
@@ -53,10 +55,8 @@ export default class ModuleStore implements ISideBarGlobalStore, IBoardGlobalSto
     props.rowIdx = rowIdx;
     props.columnIdx = columnIdx;
     this.draggingPlaceholder = props;
-    window.addEventListener('mouseup', (ev) => {
-      this.deleteDraggingPlaceholder(ev, store);
-    }, { once: true });
-    window.addEventListener('contextmenu', this.prevent);
+    this.draggingStore = store;
+    this.bindWindowListeners();
   }
   
   // create draggable element and mount it to the body
@@ -80,33 +80,62 @@ export default class ModuleStore implements ISideBarGlobalStore, IBoardGlobalSto
   }
 
   // callback when drag finish
-  @action.bound public placeholderDragEnd(ev: MouseEvent, store: IDraggableStore): void {
-    if (ev.target === null) { return; }
-    if (store.containerRef.current !== null) { store.containerRef.current.style.position = 'absolute'; }
+  @action.bound public placeholderDragEnd(ev: MouseEvent): void {
+    if (this.draggingStore === null) { return; }
+    if (this.draggingStore.containerRef.current !== null) {
+      this.draggingStore.containerRef.current.style.position = 'absolute';
+    }
     const { clientX, clientY } = ev;
     this.boardStore.handleDrop(new Point2D(clientX, clientY), this.draggingPlaceholder);
     this.draggingPlaceholder = null;
+    this.draggingStore = null;
     // the dom is not mounted on the new draggable container
     // it indicates that the draggable dom comes from the board
     if (this.draggableContainer.style.display === 'none') { return; }
-    const target = ev.target as HTMLLIElement;
-    const container = target.parentElement!.parentElement!;
-    ReactDOM.unmountComponentAtNode(container);
+    ReactDOM.unmountComponentAtNode(this.draggableContainer);
     this.draggableContainer.style.display = 'none';
   }
 
-  @action.bound private deleteDraggingPlaceholder(ev: MouseEvent, store: IDraggableStore) {
-    if (ev.button !== 2 || this.draggingPlaceholder === null) { return; }
+  // delete the current dragging placeholder
+  @action.bound private deleteDraggingPlaceholder(ev: KeyboardEvent) {
+    if (ev.code !== 'Delete' || this.draggingPlaceholder === null || this.draggingStore === null) { return; }
     ev.stopPropagation();
     ev.preventDefault();
     const { rowIdx = -1, columnIdx = -1 } = this.draggingPlaceholder;
-    this.draggingPlaceholder = null;
-    store.endDrag(ev);
+    this.dropNothing();
     this.boardStore.removePlaceholderAt(rowIdx, columnIdx);
-    window.removeEventListener('contextmenu', this.prevent);
+    setTimeout(this.removeWindowListeners);
   }
-
+  // put the current dragging placeholder back to its original position
+  @action.bound private resetDraggingPlaceholder(ev: MouseEvent) {
+    if (ev.button !== 2 || this.draggingPlaceholder === null || this.draggingStore === null) { return; }
+    ev.stopPropagation();
+    ev.preventDefault();
+    this.dropNothing();
+    setTimeout(this.removeWindowListeners);
+  }
+  // terminate the dragging and clear the draggingPlaceholder and draggingStore
+  @action.bound private dropNothing() {
+    if (this.draggingStore === null) { return; }
+    // endDrag will trigger drop in ./board.ts
+    // a position(0,0) will be sent and it is clearly out of visible area of the dragging area
+    // which will trigger a reset
+    this.draggingStore.endDrag(new MouseEvent('mousedown'));
+    this.draggingPlaceholder = null;
+    this.draggingStore = null;
+  }
   @bindthis private prevent(ev: MouseEvent | React.MouseEvent<HTMLElement>) {
     ev.preventDefault();
+    ev.stopPropagation();
+  }
+  @bindthis private bindWindowListeners() {
+    window.addEventListener('keydown', this.deleteDraggingPlaceholder, true);
+    window.addEventListener('contextmenu', this.prevent);
+    window.addEventListener('mousedown', this.resetDraggingPlaceholder, true);
+  }
+  @bindthis private removeWindowListeners() {
+    window.removeEventListener('keydown', this.deleteDraggingPlaceholder, true);
+    window.removeEventListener('contextmenu', this.prevent);
+    window.removeEventListener('mousedown', this.resetDraggingPlaceholder, true);
   }
 }

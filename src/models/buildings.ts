@@ -33,7 +33,7 @@ export interface ILimitation {
   requiredName?: string;
 }
 
-// accepted constructor input
+// accepted constructor input, only [a-zA-Z] is allowed in uniqueTag
 export interface IPlaceholder {
   description: string;
   icon: string;
@@ -41,6 +41,7 @@ export interface IPlaceholder {
   name: string;
   textColor: string;
   backgroundColor: string;
+  uniqueTag: string;
 
   rowIdx?: number;
   columnIdx?: number;
@@ -52,16 +53,18 @@ export abstract class Placeholder implements IPlaceholder {
   public readonly name: string;
   public readonly textColor: string;
   public readonly backgroundColor: string;
+  public readonly uniqueTag: string;
   protected type: EPlaceholderType;
 
   public get isArtificial() { return this.type === EPlaceholderType.building; }
 
   constructor(params: IPlaceholder) {
-    const { description = '', icon = '', name = '', textColor = '', backgroundColor = '' } = params;
+    const { description = '', icon = '', name = '', textColor = '', backgroundColor = '', uniqueTag } = params;
     this.description = description;
     this.icon = icon;
     this.name = name;
     this.type = EPlaceholderType.landscape;
+    this.uniqueTag = uniqueTag;
 
     this.textColor = textColor;
     this.backgroundColor = backgroundColor;

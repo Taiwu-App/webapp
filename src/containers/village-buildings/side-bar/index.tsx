@@ -4,7 +4,7 @@ import * as React from 'react';
 import Slider from '@/components/slider';
 import { ISliderStore } from '@/components/slider/store';
 import { IPlaceholder } from '@/models/buildings';
-import Placeholder from './placeholder';
+import Placeholder from '../placeholder';
 import './style.less';
 
 export interface ISideBarStore {
@@ -87,16 +87,17 @@ export default class SideBar extends React.Component<IProps> {
 
         {/* placeholders begin */}
         <div className="build-plan-aside__placeholder-scroll">
-          <ul className="build-plan-aside__placeholder-list">
+          <ul className="build-plan-aside__placeholder-list">            
             {filteredPlaceholders.map(
               p => (
-                <Placeholder
-                  info={p}
-                  key={p.name}
-                  size={containerStyle.width / 2 - 1} 
-                  className="build-plan-aside__placeholder"
-                  handleMousedown={mountDraggablePlaceholderFromSidebar}
-                />
+                <li className="build-plan-aside__placeholder-item" key={p.name}>
+                  <Placeholder
+                    info={p}
+                    size={containerStyle.width / 2 - 1} 
+                    className="build-plan-aside__placeholder"
+                    handleMousedown={mountDraggablePlaceholderFromSidebar}
+                  />
+                </li>
               )
             )}
           </ul>
