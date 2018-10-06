@@ -8,6 +8,8 @@ export enum EFunction {
   pop,
   // 资历减免
   expDiscount,
+  // 材料
+  materials,
   // 其他
   others
 }
