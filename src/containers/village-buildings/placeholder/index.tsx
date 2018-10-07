@@ -21,8 +21,8 @@ export default class Placeholder extends React.Component<IProps> {
   private get style() {
     const info = this.props.info;
     const style: StandardLonghandProperties = {
-      backgroundColor: info.backgroundColor,
-      color: info.textColor,
+      backgroundColor: info.style.backgroundColor,
+      color: info.style.color,
       height: `${this.props.size}px`,
       lineHeight: `${this.props.size}px`,
       width: `${this.props.size}px`,

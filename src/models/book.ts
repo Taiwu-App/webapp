@@ -1,25 +1,20 @@
 export enum EBookType {
-  music,
-  confucian,
-  medicine,
-  // 制木
-  woodCarving,
-  go,
-  buddhism,
-  poison,
-  // 锻造
-  forging,
-  literature,
-  math,
-  cooking,
-  // 巧匠
-  jadeCarving,
-  painting,
-  // 鉴赏
-  evaluation,
-  // 杂学
-  mixed,
-  clothing
+  music = '音律',
+  confucian = '道学',
+  medicine = '医术',
+  woodCarving = '制木',
+  go = '弈棋',
+  buddhism = '佛学',
+  poison = '毒术',
+  forging = '锻造',
+  literature = '文学',
+  math = '数术',
+  cooking = '厨艺',
+  jadeCarving = '巧匠',
+  painting = '绘画',
+  evaluation = '品鉴',
+  mixed = '杂学',
+  clothing = '刺绣'
 }
 
 export interface IBook {

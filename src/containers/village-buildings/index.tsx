@@ -4,7 +4,7 @@ import * as React from 'react';
 
 import BaseButton from '@/components/buttons/base';
 import bindthis from '@/decorators/bindthis';
-import { onResize } from '@/decorators/window-events-listener';
+import listen from '@/decorators/events-listener';
 import Board from './board';
 import SideBar, { containerStyle as sideBarContainerStyle } from './side-bar';
 import ModuleStore from './stores';
@@ -92,9 +92,10 @@ export default class VillageBuildings extends React.Component<IProps> {
     );
   }
 
-  @onResize private handleResize() {
+  @listen(window, 'resize') private handleResize() {
     if (this.containerRef.current === null) { return; }
     const boardWidth = this.containerRef.current.clientWidth - sideBarContainerStyle.width - sideBarContainerStyle.marginLeft;
+    this.moduleStore.sideBarStore.barHeight = this.containerRef.current.clientHeight;
     this.moduleStore.displayedBoardWidth = boardWidth;
   }
 

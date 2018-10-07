@@ -5,14 +5,21 @@ import Slider from '@/components/slider';
 import { ISliderStore } from '@/components/slider/store';
 import { IPlaceholder } from '@/models/buildings';
 import Placeholder from '../placeholder';
+import { IFilterStore } from './filters';
 import './style.less';
 
 export interface ISideBarStore {
   filteredPlaceholders: IPlaceholder[];
   isZoomBarDragging: boolean;
+  isFilterDisplay: boolean;
+  listHeight: number;
   sliderStore: ISliderStore;
+  filterStore: IFilterStore;
+  scrollDistance: number;
   zoomRatio: number;
 
+  handleListScroll: (ev: React.WheelEvent<HTMLUListElement>) => any;
+  toggleFilterDisplay: () => void;
   offsetRatio: (offset: number) => any;
 }
 
@@ -57,10 +64,16 @@ export default class SideBar extends React.Component<IProps> {
     if (this.props.store.sideBarStore.isZoomBarDragging) { classes.push('dragging'); }    
     return classes;
   }
+  private get filterIconClasses() {
+    const classes = [this.iconClassName, `${this.iconClassName}--filter`];
+    classes.push('clickable');
+    if (this.props.store.sideBarStore.isFilterDisplay) { classes.push('active'); }
+    return classes;
+  }
 
   public render() {
     const { mountDraggablePlaceholderFromSidebar, sideBarStore } = this.props.store;
-    const { filteredPlaceholders, offsetRatio, sliderStore } = sideBarStore;
+    const { filteredPlaceholders, offsetRatio, sliderStore, toggleFilterDisplay, handleListScroll, listHeight, scrollDistance } = sideBarStore;
     return (
       <aside
         className="build-plan-aside__container"
@@ -68,26 +81,39 @@ export default class SideBar extends React.Component<IProps> {
       >
         {/* tool bar begin */}
         <section className="build-plan-aside__tool-bar">
-          <i
-            className={this.zoomOutIconClasses.join(' ')}
-            onClick={offsetRatio.bind(sideBarStore, -10)}
-          />
-          <Slider
-            className={this.sliderClasses.join(' ')}
-            store={sliderStore}
-          />
-          <i
-            className={this.zoomInIconClasses.join(' ')}
-            onClick={offsetRatio.bind(sideBarStore, 10)}
-          />
+          <div className="build-plan-aside__zoom">
+            <i
+              className={this.zoomOutIconClasses.join(' ')}
+              onClick={offsetRatio.bind(sideBarStore, -10)}
+            />
+            <Slider
+              className={this.sliderClasses.join(' ')}
+              store={sliderStore}
+            />
+            <i
+              className={this.zoomInIconClasses.join(' ')}
+              onClick={offsetRatio.bind(sideBarStore, 10)}
+            />
+          </div>
+          <div className="build-plan-aside__filter">
+            <i
+              className={this.filterIconClasses.join(' ')}
+              onClick={toggleFilterDisplay}
+            />
+          </div>
         </section>
         {/* tool bar end */}
 
-        {/* filter too bar */}
-
         {/* placeholders begin */}
-        <div className="build-plan-aside__placeholder-scroll">
-          <ul className="build-plan-aside__placeholder-list">            
+        <div
+          className="build-plan-aside__placeholder-scroll"
+          style={{maxHeight: listHeight}}
+        >
+          <ul
+            className="build-plan-aside__placeholder-list"
+            onWheel={handleListScroll}
+            style={{transform: `translateY(-${scrollDistance}px)`}}
+          >            
             {filteredPlaceholders.map(
               p => (
                 <li className="build-plan-aside__placeholder-item" key={p.name}>
