@@ -27,5 +27,4 @@ if (
   argv.push('--watch');
 }
 
-require('./convert-csv');
 jest.run(argv);
