@@ -8,5 +8,5 @@ function parseOne(line: IRawLandscape): Landscape {
 }
 
 const landscapes = parseCSV<IRawLandscape, Landscape>(raw, parseOne);
-console.log(landscapes);
+// console.log(landscapes);
 export default landscapes;

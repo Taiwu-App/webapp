@@ -27,7 +27,7 @@ function parseOne(line: IRawBookData): Book {
   const type: EBookType = bookTypeDict[typeStr];
   const level = parseInt(levelStr, 10);
   if (name === '' || isNaN(level) || level < 0 || type === undefined) {
-    console.log(name, levelStr, level, typeStr, type);
+    // console.log(name, levelStr, level, typeStr, type);
     throw new Error(`input of the book ${JSON.stringify(line)} is not correct!`);
   }
   return new Book(name, level, type);

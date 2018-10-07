@@ -34,3 +34,8 @@ declare module '@/assets/data/buildings.csv' {
   const _a: IRawBuilding[];
   export default _a;
 }
+
+declare module '*.json' {
+  const _a: any;
+  export default _a;
+}

@@ -5,6 +5,7 @@
 
 # testing
 /coverage
+/csv-converted
 
 # production
 /build

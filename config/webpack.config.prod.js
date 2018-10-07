@@ -185,6 +185,15 @@ module.exports = {
             }]
           },
           {
+            test: /\.csv$/,
+            loader: 'csv-loader',
+            options: {
+              header: true,
+              skipEmptyLines: true,
+              comments: '#'
+            }
+          },
+          {
             loader: require.resolve('file-loader'),
             exclude: [/\.(js|jsx|mjs)$/, /\.html$/, /\.json$/],
             options: {
