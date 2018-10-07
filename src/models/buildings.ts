@@ -1,13 +1,23 @@
+import { Book } from './book';
+
 // functions of the building
-export enum EFunction {
+export enum EUsages {
   // 钱
   gold,
   // 声望
   fame,
-  // 人口
+  // 人
   pop,
-  // 资历减免
-  expDiscount,
+  // 学习
+  study,
+  // 修习
+  practice,
+  // 突破
+  breakthrough,
+  // 工具
+  tool,
+  // 造诣
+  attainments,
   // 材料
   materials,
   // 其他
@@ -17,12 +27,6 @@ export enum EFunction {
 export enum EPlaceholderType {
   building,
   landscape
-}
-
-// book requirement
-export interface IBookInfo {
-  exp: number;
-  name: string;
 }
 
 export enum ELimitation {
@@ -35,14 +39,19 @@ export interface ILimitation {
   requiredName?: string;
 }
 
+export interface IPlaceholderStyle {
+  color: string;
+  backgroundColor: string;
+  borderColor: string;
+}
 // accepted constructor input, only [a-zA-Z] is allowed in uniqueTag
 export interface IPlaceholder {
   description: string;
   icon: string;
   isArtificial: boolean;
   name: string;
-  textColor: string;
-  backgroundColor: string;
+  style: IPlaceholderStyle;
+  rarity: number;
   uniqueTag: string;
 
   rowIdx?: number;
@@ -51,45 +60,48 @@ export interface IPlaceholder {
 
 export abstract class Placeholder implements IPlaceholder {
   public readonly description: string;
-  public readonly icon: string;
-  public readonly name: string;
-  public readonly textColor: string;
-  public readonly backgroundColor: string;
-  public readonly uniqueTag: string;
+  public readonly rarity: number;
+  public readonly style: IPlaceholderStyle;
   protected type: EPlaceholderType;
 
   public get isArtificial() { return this.type === EPlaceholderType.building; }
 
-  constructor(params: IPlaceholder) {
-    const { description = '', icon = '', name = '', textColor = '', backgroundColor = '', uniqueTag } = params;
+  constructor(public readonly icon: string, public readonly name: string, public readonly uniqueTag: string, other: any = {}) {
+    const { description = '', rarity = 9, style = {} } = other;
     this.description = description;
-    this.icon = icon;
-    this.name = name;
-    this.type = EPlaceholderType.landscape;
-    this.uniqueTag = uniqueTag;
+    this.rarity = rarity;
+    const { color = 'black', backgroundColor = 'white', borderColor = 'black' } = style;
+    this.style = { color, backgroundColor, borderColor };
+  }
+}
 
-    this.textColor = textColor;
-    this.backgroundColor = backgroundColor;
+export interface ILandscape extends IPlaceholder {
+  something?: any;
+}
+
+export class Landscape extends Placeholder implements ILandscape {
+  constructor(icon: string, name: string, tag: string, other: any) {
+    super(icon, name, tag, other);
+    this.type = EPlaceholderType.landscape;
   }
 }
 
 export interface IBuilding extends IPlaceholder {
-  bookInfo?: IBookInfo;
-  functions?: EFunction[];
-  limitations?: ILimitation[];
+  book?: Book;
+  usages: EUsages[];
+  limitations: ILimitation[];
 }
 
 export class Building extends Placeholder implements IBuilding {
-  public readonly bookInfo: IBookInfo | undefined;
-  public readonly functions: EFunction[];
+  public readonly book: Book | undefined;
+  public readonly usages: EUsages[];
   public readonly limitations: ILimitation[];
-  constructor(params: IBuilding) {
-    super(params);
+  constructor(icon: string, name: string, tag: string, other: any) {
+    super(icon, name, tag, other);
     this.type = EPlaceholderType.building;
-    this.bookInfo = params.bookInfo;
-    const { functions = [], limitations = [] } = params;
-    if (functions.length === 0) { this.functions = [EFunction.others]; }
-    else { this.functions = functions; }
+    const { usages = [], limitations = [], book } = other;
+    this.book = book;
+    this.usages = usages;
     this.limitations = limitations;
   }
 }

@@ -1,6 +1,6 @@
 import { action, computed, observable } from 'mobx';
 
-import buildings from '@/data/buildings';
+import buildings from '@/assets/data/buildings';
 import bindthis from '@/decorators/bindthis';
 import { IPlaceholder } from './buildings';
 import Matrix from './matrix';

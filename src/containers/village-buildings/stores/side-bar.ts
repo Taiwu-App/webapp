@@ -1,7 +1,7 @@
 import { action, computed, observable } from 'mobx';
 
+import buildings from '@/assets/data/buildings';
 import SliderStore, { ISliderStore } from '@/components/slider/store';
-import buildings from '@/data/buildings';
 import { IBuilding } from '@/models/buildings';
 import { ISideBarStore } from '../side-bar';
 

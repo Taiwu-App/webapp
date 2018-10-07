@@ -17,16 +17,5 @@ export default class App extends React.Component {
         </div>
       )
     ];
-    // return (
-    //   <div className="root">
-    //     <TopHeader className="layout__head"/>
-    //     {/* begin of main */}
-    //     <div className="layout__body">
-    //       <SideMenu />
-    //       <RouterView />
-    //     </div>
-    //     {/* end of main */}
-    //   </div>
-    // );
   }
 }
