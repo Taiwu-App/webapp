@@ -15,7 +15,15 @@ const convertCSV = function(fileName) {
   fs.writeFileSync(`./csv-converted/${fileName}.json`,JSON.stringify(file));
 };
 
-module.exports = function(...args) {
-  const regex = /(.*).csv/;
-  allFiles.map(f => f.match(regex)).filter(f => f !== null).map(f => f[1]).forEach(convertCSV);
-}
+const regex = /(.*).csv/;
+const fileNames = allFiles.map(f => f.match(regex))
+.filter(f => f !== null)
+.map(f => f[1]);
+
+fileNames.forEach(f => {
+  const filePath = `${path}/${f}.csv`;
+  convertCSV(f);
+  fs.watchFile(filePath, () => {
+    convertCSV(f)
+  });
+});

@@ -75,9 +75,6 @@
       "src/**/*.{js,jsx,ts,tsx}",
       "!**/*.d.ts"
     ],
-    "coveragePathIgnorePatterns": [
-      "/csv-converted/"
-    ],
     "setupFiles": [
       "<rootDir>/config/polyfills.js"
     ],
@@ -118,8 +115,7 @@
       "ts-jest": {
         "tsConfigFile": "/home/junchao/coding/taiwu-app/tsconfig.test.json"
       }
-    },
-    "globalSetup": "<rootDir>/config/convert-csv.js"
+    }
   },
   "babel": {
     "presets": [
