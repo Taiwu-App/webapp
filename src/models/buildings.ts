@@ -14,8 +14,8 @@ export enum EUsages {
   practice,
   // 突破
   breakthrough,
-  // 工具
-  tool,
+  // 制品
+  production ,
   // 造诣
   attainments,
   // 材料

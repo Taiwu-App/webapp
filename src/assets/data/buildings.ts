@@ -12,7 +12,7 @@ const usageDict: {[key: string]: EUsages} = {
   '学习': EUsages.study,
   '修习': EUsages.practice,
   '突破': EUsages.breakthrough,
-  '制品': EUsages.tool,
+  '制品': EUsages.production,
   '造诣': EUsages.attainments,
   '材料': EUsages.materials,
   '其他': EUsages.others

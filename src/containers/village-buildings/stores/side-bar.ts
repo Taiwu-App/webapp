@@ -31,7 +31,15 @@ export default class SideBarStore implements ISideBarStore {
   // buildings and landscapes
   private readonly buildings: IBuilding[] = buildings;
   @computed get filteredBuildings() {
-    return [...this.buildings];
+    const { types, usages } = this.filterStore;
+    let results = this.buildings.filter(b => b.book !== undefined && types.indexOf(b.book.type) > -1);
+    results = results.filter(b => {
+      for (const u of b.usages) {
+        if (usages.indexOf(u) > -1) { return true; }
+      }
+      return false;
+    });
+    return results;
   }
   @computed get filteredPlaceholders() {
     return [...this.filteredBuildings];
