@@ -1,5 +1,5 @@
 import raw, { IRawBuilding } from '@/assets/data/buildings.csv';
-import { Book } from '@/models/book';
+import { Book, EBookType } from '@/models/book';
 import { Building, ELimitation, EUsages, ILimitation } from '@/models/buildings';
 import parseCSV from '@/utils/csv-reader';
 import books from './books';
@@ -45,6 +45,15 @@ function parseLimitations(limitStr: string): ILimitation[] {
   });
 }
 
+function parseDiscipline(discipline: string): EBookType | undefined {
+  if (discipline === '') { return undefined; }
+  else {
+    const types = Object.keys(EBookType).filter(t => EBookType[t] === discipline);
+    if (types.length !== 1) { throw new Error(`discipline ${discipline} does not exist`); }
+    return types[0] as EBookType;
+  }
+}
+
 function parseUsages(usageStr: string): EUsages[] {
   if (usageStr === '') { return []; }
   const usages = usageStr.split('&');
@@ -58,11 +67,12 @@ function parseUsages(usageStr: string): EUsages[] {
 }
 
 function parseOne(line: IRawBuilding): Building {
-  const { tag, icon, name, usages: usageStr, limits: limitStr, book: bookName } = line;
+  const { tag, icon, name, usages: usageStr, limits: limitStr, book: bookName, type: disciplineStr } = line;
   const book: Book | undefined = findBook(bookName);
   const limitations: ILimitation[] = parseLimitations(limitStr);
   const usages: EUsages[] = parseUsages(usageStr);
-  return new Building(icon, name, tag, { book, usages, limitations });
+  const discipline: EBookType | undefined = parseDiscipline(disciplineStr);
+  return new Building(icon, name, tag, { book, usages, limitations, discipline });
 }
 
 const buildings = parseCSV<IRawBuilding, Building>(raw, parseOne);

@@ -1,4 +1,4 @@
-import { Book } from './book';
+import { Book, EBookType } from './book';
 
 // functions of the building
 export enum EUsages {
@@ -90,16 +90,26 @@ export interface IBuilding extends IPlaceholder {
   book?: Book;
   usages: EUsages[];
   limitations: ILimitation[];
+  discipline: EBookType;
 }
 
 export class Building extends Placeholder implements IBuilding {
   public readonly book: Book | undefined;
   public readonly usages: EUsages[];
   public readonly limitations: ILimitation[];
+
+  private readonly _discipline?: EBookType;
+  public get discipline(): EBookType {
+    if (this._discipline === undefined) {
+      if (this.book === undefined) { return EBookType.others; }
+      else { return this.book.type; }
+    } else { return this._discipline; }
+  }
   constructor(icon: string, name: string, tag: string, other: any) {
     super(icon, name, tag, other);
     this.type = EPlaceholderType.building;
-    const { usages = [], limitations = [], book } = other;
+    const { usages = [], limitations = [], book, discipline } = other;
+    this._discipline = discipline;
     this.book = book;
     this.usages = usages;
     this.limitations = limitations;

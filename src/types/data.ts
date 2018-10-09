@@ -25,6 +25,7 @@ declare module '@/assets/data/buildings.csv' {
     icon: string;
     name: string;
     usages: string;
+    type: string;
     limits: string;
     book: string;
     brief: string;

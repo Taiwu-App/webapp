@@ -32,7 +32,7 @@ export default class SideBarStore implements ISideBarStore {
   private readonly buildings: IBuilding[] = buildings;
   @computed get filteredBuildings() {
     const { types, usages } = this.filterStore;
-    let results = this.buildings.filter(b => b.book !== undefined && types.indexOf(b.book.type) > -1);
+    let results = this.buildings.filter(b => types.indexOf(b.discipline) > -1);
     results = results.filter(b => {
       for (const u of b.usages) {
         if (usages.indexOf(u) > -1) { return true; }

@@ -14,7 +14,9 @@ export enum EBookType {
   painting = '绘画',
   evaluation = '品鉴',
   mixed = '杂学',
-  clothing = '刺绣'
+  clothing = '刺绣',
+  kongfu = '武功',
+  others = '其他'
 }
 
 export interface IBook {
