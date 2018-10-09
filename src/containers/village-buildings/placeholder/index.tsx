@@ -10,7 +10,10 @@ interface IProps {
   className?: string;
   info: IPlaceholder;
   size: number;
+
   handleMousedown?: (ev: React.MouseEvent<HTMLElement>, prop: IPlaceholder) => any;
+  handleMouseEnter?: (info: IPlaceholder) => any;
+  handleMouseLeave?: () => any;
 }
 
 export default class Placeholder extends React.Component<IProps> {
@@ -49,6 +52,8 @@ export default class Placeholder extends React.Component<IProps> {
         className={`build-plan__placeholder ${this.props.className}`}
         style={this.style}
         onMouseDown={this.handleMousedown}
+        onMouseEnter={this.handleMouseEnter}
+        onMouseLeave={this.handleMouseLeave}
       >
         {this.content}
       </div>
@@ -58,6 +63,14 @@ export default class Placeholder extends React.Component<IProps> {
   @bindthis private handleMousedown(ev: React.MouseEvent<HTMLElement>) {
     if (this.props.handleMousedown === undefined || ev.button !== 0) { return; }
     this.props.handleMousedown(ev, this.props.info);
+  }
+  @bindthis private handleMouseEnter() {
+    if (this.props.handleMouseEnter === undefined) { return; }
+    this.props.handleMouseEnter(this.props.info);
+  }
+  @bindthis private handleMouseLeave() {
+    if (this.props.handleMouseLeave === undefined) { return; }
+    this.props.handleMouseLeave();
   }
 }
 

@@ -15,6 +15,8 @@ export default class ModuleStore implements ISideBarGlobalStore, IBoardGlobalSto
   public readonly boardStore: BoardStore;
   public readonly sideBarStore: SideBarStore;
   @observable public displayedBoardWidth: number = 0;
+
+  @observable public hoveredPlaceholder: IPlaceholder | null = null;
   @observable private draggingPlaceholder: IPlaceholder | null = null;
   private draggingStore: IDraggableStore | null = null;
   // div container to mount the draggable placeholder
@@ -55,6 +57,7 @@ export default class ModuleStore implements ISideBarGlobalStore, IBoardGlobalSto
     props.rowIdx = rowIdx;
     props.columnIdx = columnIdx;
     this.draggingPlaceholder = props;
+    // this.mouseLeavePlaceholder();
     this.draggingStore = store;
     this.bindWindowListeners();
   }
@@ -87,6 +90,7 @@ export default class ModuleStore implements ISideBarGlobalStore, IBoardGlobalSto
     }
     const { clientX, clientY } = ev;
     this.boardStore.handleDrop(new Point2D(clientX, clientY), this.draggingPlaceholder);
+    // this.mouseEnterPlaceholder(this.draggingPlaceholder!);
     this.draggingPlaceholder = null;
     this.draggingStore = null;
     // the dom is not mounted on the new draggable container
@@ -137,5 +141,12 @@ export default class ModuleStore implements ISideBarGlobalStore, IBoardGlobalSto
     window.removeEventListener('keydown', this.deleteDraggingPlaceholder, true);
     window.removeEventListener('contextmenu', this.prevent);
     window.removeEventListener('mousedown', this.resetDraggingPlaceholder, true);
+  }
+
+  @action.bound public mouseEnterPlaceholder(info: IPlaceholder) {
+    this.hoveredPlaceholder = info;
+  }
+  @action.bound public mouseLeavePlaceholder() {
+    this.hoveredPlaceholder = null;
   }
 }

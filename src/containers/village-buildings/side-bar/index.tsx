@@ -28,6 +28,8 @@ export interface IModuleStore {
   sideBarStore: ISideBarStore;
 
   mountDraggablePlaceholderFromSidebar :(ev: React.MouseEvent<HTMLElement>, props: IPlaceholder) => any;
+  mouseEnterPlaceholder: (info: IPlaceholder) => any;
+  mouseLeavePlaceholder: () => any;
 }
 
 interface IProps {
@@ -72,7 +74,7 @@ export default class SideBar extends React.Component<IProps> {
   }
 
   public render() {
-    const { mountDraggablePlaceholderFromSidebar, sideBarStore } = this.props.store;
+    const { mountDraggablePlaceholderFromSidebar, sideBarStore, mouseEnterPlaceholder, mouseLeavePlaceholder } = this.props.store;
     const { filteredPlaceholders, offsetRatio, sliderStore, toggleFilterDisplay, handleListScroll, listHeight, scrollDistance } = sideBarStore;
     return (
       <aside
@@ -122,6 +124,8 @@ export default class SideBar extends React.Component<IProps> {
                     size={containerStyle.width / 2 - 1} 
                     className="build-plan-aside__placeholder"
                     handleMousedown={mountDraggablePlaceholderFromSidebar}
+                    handleMouseEnter={mouseEnterPlaceholder}
+                    handleMouseLeave={mouseLeavePlaceholder}
                   />
                 </li>
               )

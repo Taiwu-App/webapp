@@ -36,6 +36,11 @@ export default class BoardStore implements IBoardStore {
   @computed public get cellSize(): number {
     return (this.maxCellSize - this.minCellSize) * this.zoomRatio / 100 + this.minCellSize;
   }
+  @computed public get className(): string {
+    if (this.cellSize < 40) { return 'small'; }
+    else if (this.cellSize < 100) { return 'medium'; }
+    else { return 'large'; }
+  }
   @action.bound public offsetRatio(offset: number) {
     this.sliderStore.setRatio(this.zoomRatio + offset);
   }

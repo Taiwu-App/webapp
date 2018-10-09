@@ -12,6 +12,7 @@ export interface IBoardStore {
   boardHeight: number;
   boardWidth: number;
   cellSize: number;
+  className: string;
   grids: IGridInfo[][];
   numberRows: number;
   numberColumns: number;
@@ -25,6 +26,8 @@ export interface IModuleStore {
 
   handleDragStart: (props: IPlaceholder, store: IDraggableStore, rowIdx?: number, columnIdx?: number) => any;
   placeholderDragEnd: (ev: MouseEvent, store: IDraggableStore) => void;
+  mouseEnterPlaceholder: (info: IPlaceholder) => any;
+  mouseLeavePlaceholder: () => any;
 }
 
 export interface IBoardProps {
@@ -95,7 +98,11 @@ export default class Board extends React.Component<IBoardProps> {
   @bindthis
   private renderPlaceholder(props: IPlaceholder | null, rowIdx: number, columnIdx: number) {
     if (props === null) { return null; }
+    const { mouseEnterPlaceholder, mouseLeavePlaceholder } = this.props.store;
     const node = createDraggablePlaceholder({
+      className: this.localStore.className,
+      handleMouseEnter: mouseEnterPlaceholder,
+      handleMouseLeave: mouseLeavePlaceholder,
       info: props,
       size: this.localStore.cellSize
     }, {
@@ -110,6 +117,7 @@ export default class Board extends React.Component<IBoardProps> {
   @bindthis
   private handleWheelZoom(ev: React.WheelEvent<HTMLTableElement>) {
     ev.preventDefault();
+    this.props.store.mouseLeavePlaceholder();
     const offset = ev.deltaY > 0 ? -10 : 10;
     this.localStore.offsetRatio(offset);
   }

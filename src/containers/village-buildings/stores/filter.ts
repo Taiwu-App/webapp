@@ -17,27 +17,33 @@ export const usageDicts: {[key: number]: string} = {
   [EUsages.others]: '其他'
 };
 
+export type filterKeys = 'types' | 'usages' | 'disciplines';
+export type checkboxStatus = boolean | 'intermediate';
+export enum EType { buildings, landscapes }
 const allUsages: EUsages[] = Object.keys(EUsages).map(s => parseInt(s, 10)).filter(n => !isNaN(n));
-const allTypes = Object.keys(EBookType) as EBookType[];
+const allDisciplines = Object.keys(EBookType) as EBookType[];
 
 export default class FilterStore implements IFilterStore {
   @observable public usages: EUsages[] = allUsages;
-  @computed public get allUsagesCheck(): boolean | 'intermediate' {
+  @computed public get allUsagesCheck(): checkboxStatus {
     return this.allCheckboxStatus(this.usages, allUsages.length);
   }
-  @observable public types: EBookType[] = allTypes;
-  @computed public get allTypesCheck(): boolean | 'intermediate' {
-    return this.allCheckboxStatus(this.types, allTypes.length);
+  @observable public disciplines: EBookType[] = allDisciplines;
+  @computed public get allDisciplinesCheck(): checkboxStatus {
+    return this.allCheckboxStatus(this.disciplines, allDisciplines.length);
   }
   @observable public name: string = '';
-  @observable public isArtificial: 'yes' | 'no' | 'all' = 'all';
+  @observable public types: EType[] = [EType.buildings, EType.landscapes];
+  @computed public get allTypesCheck(): checkboxStatus {
+    return this.allCheckboxStatus(this.types, 2);
+  }
 
-  private allCheckboxStatus<T>(variable: T[], total: number): boolean | 'intermediate' {
+  private allCheckboxStatus<T>(variable: T[], total: number): checkboxStatus {
     if (variable.length === 0) { return false; }
     else if (variable.length === total) { return true; }
     else { return 'intermediate'; }
   }
-  @action.bound public handleCheckBoxChange(key: any, section: 'usages' | 'types', currentVal: boolean) {
+  @action.bound public handleCheckBoxChange(key: any, section: filterKeys, currentVal: boolean) {
     const array = this[section] as any;
     if (section === 'usages') { key = parseInt(key, 10); }
     if (currentVal === true) {
@@ -46,14 +52,17 @@ export default class FilterStore implements IFilterStore {
       array.push(key);
     }
   }
-  @action.bound public handleCheckAllChange(section: 'usages' | 'types') {
+  @action.bound public handleCheckAllChange(section: filterKeys) {
     const array = this[section] as any;
-    const currentVal = this[`all${section.charAt(0).toUpperCase()}${section.slice(1)}Check`] as boolean | 'intermediate';
+    const currentVal = this[`all${section.charAt(0).toUpperCase()}${section.slice(1)}Check`] as checkboxStatus;
     if (currentVal === true) {
       array.clear();
     } else {
       // false or intermediate
-      const initialValue = section === 'usages' ? allUsages : allTypes as any;
+      let initialValue: any[];
+      if (section === 'usages') { initialValue = allUsages; }
+      else if (section === 'disciplines') { initialValue = allDisciplines; }
+      else { initialValue = [EType.buildings, EType.landscapes]; }
       array.replace(initialValue);
     }
   }

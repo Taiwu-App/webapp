@@ -6,6 +6,7 @@ import BaseButton from '@/components/buttons/base';
 import bindthis from '@/decorators/bindthis';
 import listen from '@/decorators/events-listener';
 import Board from './board';
+import DetailInfo from './detail-info';
 import SideBar, { containerStyle as sideBarContainerStyle } from './side-bar';
 import ModuleStore from './stores';
 import './style.less';
@@ -88,6 +89,7 @@ export default class VillageBuildings extends React.Component<IProps> {
           </div>
         </div>
         <SideBar store={this.moduleStore}/>
+        <DetailInfo info={this.moduleStore.hoveredPlaceholder}/>
       </main>
     );
   }

@@ -3,11 +3,12 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
 import buildings from '@/assets/data/buildings';
+import landscapes from '@/assets/data/landscapes';
 import SliderStore, { ISliderStore } from '@/components/slider/store';
 import { IBuilding } from '@/models/buildings';
 import { ISideBarStore } from '../side-bar';
 import Filter, { IFilterStore } from '../side-bar/filters';
-import FilterStore from './filter';
+import FilterStore, { EType } from './filter';
 
 export default class SideBarStore implements ISideBarStore {
   @observable public readonly sliderStore: ISliderStore;
@@ -31,8 +32,8 @@ export default class SideBarStore implements ISideBarStore {
   // buildings and landscapes
   private readonly buildings: IBuilding[] = buildings;
   @computed get filteredBuildings() {
-    const { types, usages } = this.filterStore;
-    let results = this.buildings.filter(b => types.indexOf(b.discipline) > -1);
+    const { disciplines, usages } = this.filterStore;
+    let results = this.buildings.filter(b => disciplines.indexOf(b.discipline) > -1);
     results = results.filter(b => {
       for (const u of b.usages) {
         if (usages.indexOf(u) > -1) { return true; }
@@ -42,7 +43,12 @@ export default class SideBarStore implements ISideBarStore {
     return results;
   }
   @computed get filteredPlaceholders() {
-    return [...this.filteredBuildings];
+    setTimeout(() => this.handleListScroll({ deltaY: 0 }), 32);
+    const { types } = this.filterStore;
+    if (types.length === 2) { return [...landscapes, ...this.filteredBuildings]; }
+    else if (types.length === 0) { return []; }
+    else if (types[0] === EType.buildings) { return [...this.filteredBuildings]; }
+    else { return [...landscapes]; }
   }
 
   constructor() {

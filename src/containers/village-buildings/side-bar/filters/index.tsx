@@ -5,20 +5,21 @@ import BaseCheckbox from '@/components/check-box/base';
 import FullHeightModal from '@/components/modals/full-height-modal';
 import { EBookType } from '@/models/book';
 import { EUsages } from '@/models/buildings';
-import { usageDicts } from '../../stores/filter';
+import { checkboxStatus, EType, filterKeys, usageDicts } from '../../stores/filter';
 import { ISideBarStore } from '../index';
 import './style.less';
 
 export interface IFilterStore {
   usages: EUsages[];
-  types: EBookType[];
+  disciplines: EBookType[];
   name: string;
-  allUsagesCheck: boolean | 'intermediate';
-  allTypesCheck: boolean | 'intermediate';
-  isArtificial: 'yes' | 'no' | 'all';
+  types: EType[];
+  allUsagesCheck: checkboxStatus;
+  allTypesCheck: checkboxStatus;
+  allDisciplinesCheck: checkboxStatus;
 
-  handleCheckBoxChange: (key: string, section: 'usages' | 'types', currentVal: boolean) => any;
-  handleCheckAllChange: (section: 'usages' | 'types') => any;
+  handleCheckBoxChange: (key: string, section: filterKeys, currentVal: boolean) => any;
+  handleCheckAllChange: (section: filterKeys) => any;
 }
 
 interface IProp {
@@ -29,7 +30,7 @@ interface IProp {
 export default class FilterModal extends React.Component<IProp> {
   public render() {
     const { toggleFilterDisplay, filterStore} = this.props.sidebarStore;
-    const { allUsagesCheck, allTypesCheck, handleCheckAllChange } = filterStore;
+    const { allUsagesCheck, allDisciplinesCheck, allTypesCheck, handleCheckAllChange, handleCheckBoxChange, types } = filterStore;
     return (
       <FullHeightModal className="filter-modal__container">
         <header className="filter-modal__header-wrapper">
@@ -56,7 +57,23 @@ export default class FilterModal extends React.Component<IProp> {
             </div>
           </section>
           {/* usage-section end */}
-          {/* type-section start */}
+          {/* disciplines-section start */}
+          <section className="filter-modal__section">
+            <div className="filter-modal__section-header">
+              <BaseCheckbox                
+                className="filter-modal__checkbox--all"
+                value={allDisciplinesCheck}
+                onClick={handleCheckAllChange.bind(filterStore, 'disciplines')}
+              >
+                <h6 className="filter-modal__section-title">学科</h6>
+              </BaseCheckbox>
+            </div>
+            <div className="filter-modal__section-content">
+              {this.renderDisciplines()}
+            </div>
+          </section>
+          {/* disciplines-section end */}
+          {/* types-section start */}
           <section className="filter-modal__section">
             <div className="filter-modal__section-header">
               <BaseCheckbox                
@@ -64,14 +81,27 @@ export default class FilterModal extends React.Component<IProp> {
                 value={allTypesCheck}
                 onClick={handleCheckAllChange.bind(filterStore, 'types')}
               >
-                <h6 className="filter-modal__section-title">分类</h6>
+                <h6 className="filter-modal__section-title">种类</h6>
               </BaseCheckbox>
             </div>
             <div className="filter-modal__section-content">
-              {this.renderTypes()}
+              <BaseCheckbox
+                className="filter-modal__checkbox"
+                value={types.length !==0 && types.indexOf(EType.buildings) > -1}
+                onClick={handleCheckBoxChange.bind(filterStore, EType.buildings, 'types')}
+              >
+                建筑
+              </BaseCheckbox>
+              <BaseCheckbox
+                className="filter-modal__checkbox"
+                value={types.length !==0 && types.indexOf(EType.landscapes) > -1}
+                onClick={handleCheckBoxChange.bind(filterStore, EType.landscapes, 'types')}
+              >
+                自然资源
+              </BaseCheckbox>
             </div>
           </section>
-          {/* type-section end */}
+          {/* types-section end */}
         </main>
       </FullHeightModal>
     );
@@ -96,18 +126,18 @@ export default class FilterModal extends React.Component<IProp> {
     });
   }
 
-  public renderTypes() {
+  public renderDisciplines() {
     const { filterStore } = this.props.sidebarStore;
-    const { handleCheckBoxChange, types } = filterStore;
+    const { handleCheckBoxChange, disciplines } = filterStore;
     const keys = Object.keys(EBookType);
     return keys.map(k => {
-      const value = types.indexOf(k as EBookType) > -1;
+      const value = disciplines.indexOf(k as EBookType) > -1;
       return (
         <BaseCheckbox
           className="filter-modal__checkbox"
           key={k}
           value={value}
-          onClick={handleCheckBoxChange.bind(filterStore, k, 'types')}
+          onClick={handleCheckBoxChange.bind(filterStore, k, 'disciplines')}
         >
           {EBookType[k]}
         </BaseCheckbox>
