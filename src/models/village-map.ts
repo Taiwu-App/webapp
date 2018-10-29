@@ -1,10 +1,12 @@
 import { action, computed, observable } from 'mobx';
 
 import buildings from '@/assets/data/buildings';
+import landscapes from '@/assets/data/landscapes';
 import bindthis from '@/decorators/bindthis';
 import { IPlaceholder } from './buildings';
 import Matrix from './matrix';
 
+const placeholders = [...buildings, ...landscapes];
 export interface IGridInfo {
   placeholder: IPlaceholder | null;
   isAllow: boolean;
@@ -87,7 +89,7 @@ export class VillageMap implements IVillageMap {
     const tagMatrix: Matrix<string> | null = this.parseTokenArrayByVersion(tokenArray, version[0]);
     if (tagMatrix === null) { return false; }
     tagMatrix.vals.forEach((row, rIdx) => row.forEach((tag, cIdx) => {
-      const [placeholder = null] = buildings.filter(b => b.uniqueTag === tag);
+      const [placeholder = null] = placeholders.filter(b => b.uniqueTag === tag);
       if (placeholder === null) { return; }
       this.setPlaceholderAt(rIdx, cIdx, placeholder);
     }));
